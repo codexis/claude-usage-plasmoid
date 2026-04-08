@@ -1,0 +1,19 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Codexis"
+            }
+        ],
+        "Category": "System Information",
+        "Description": "Shows Claude AI usage (5h and 7d windows) as circular progress rings",
+        "Icon": "utilities-system-monitor",
+        "Id": "io.github.codexis.claudeusage",
+        "License": "MIT",
+        "Name": "Claude AI Usage",
+        "Version": "1.0.0",
+        "Website": ""
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}
