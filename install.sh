@@ -19,6 +19,18 @@ if [ -d "$INSTALL_DIR" ]; then
     rm -rf "$INSTALL_DIR"
 fi
 
+# Clear stale QML cache for this widget's files only.
+# Qt names cache entries by SHA-1 of the installed file's absolute path.
+echo "▸ Clearing widget QML cache…"
+QML_UI_DIR="$HOME/.local/share/plasma/plasmoids/$APP_ID/contents/ui"
+for CACHE_DIR in "$HOME/.cache/plasmashell/qmlcache" "$HOME/.cache/plasmawindowed/qmlcache"; do
+    [ -d "$CACHE_DIR" ] || continue
+    for QML_FILE in main.qml RingGauge.qml configGeneral.qml; do
+        HASH=$(echo -n "$QML_UI_DIR/$QML_FILE" | sha1sum | cut -d' ' -f1)
+        rm -f "$CACHE_DIR/$HASH.qmlc"
+    done
+done
+
 echo "▸ Installing plasmoid…"
 
 if command -v kpackagetool6 &>/dev/null; then
@@ -37,9 +49,13 @@ fi
 
 echo ""
 echo "▸ Reloading plasmashell…"
-if command -v kquitapp6 &>/dev/null && command -v kstart6 &>/dev/null; then
+if command -v kquitapp6 &>/dev/null; then
     kquitapp6 plasmashell
-    kstart6 plasmashell &
+    if command -v kstart6 &>/dev/null; then
+        kstart6 plasmashell &
+    else
+        kstart plasmashell &
+    fi
     echo "  plasmashell restarting in background"
 else
     echo "  (restart plasmashell manually to apply changes)"

@@ -63,6 +63,19 @@ PlasmoidItem {
         return months[d.getMonth()] + " " + d.getDate()
     }
 
+    // Exact reset clock time: "14:30" (today) or "Apr 16 14:30" (another day)
+    function formatResetTime(iso) {
+        if (!iso) return "–"
+        var d = new Date(iso)
+        var hh = d.getHours();   var hStr = (hh < 10 ? "0" : "") + hh
+        var mm = d.getMinutes(); var mStr = (mm < 10 ? "0" : "") + mm
+        var timeStr = hStr + ":" + mStr
+        var now = new Date()
+        if (d.toDateString() === now.toDateString()) return timeStr
+        var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+        return months[d.getMonth()] + " " + d.getDate() + " " + timeStr
+    }
+
     // ── DataSource — runs Python script via shell ─────────────────────────────
     PlasmaCore.DataSource {
         id: ds
@@ -201,7 +214,10 @@ PlasmoidItem {
                     value:    root.usage5h
                     accent:   root.colorFor(root.usage5h)
                     ringBg:   root.colRing
-                    resetIn:  (root._tick, root.formatTimeLeft(root.reset5h))
+                    resetIn:  (root._tick,
+                              Plasmoid.configuration.session5hResetMode === "exactTime"
+                              ? root.formatResetTime(root.reset5h)
+                              : root.formatTimeLeft(root.reset5h))
                     errMode:  !root.loaded
                     subColor: root.colSub
                     textColor: root.colText
