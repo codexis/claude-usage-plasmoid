@@ -5,10 +5,14 @@
                           http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
     <kcfgfile name=""/>
     <group name="General">
-        <!-- "timeLeft"  → remaining time  (e.g. "1h 23m")  -->
-        <!-- "exactTime" → exact clock time (e.g. "14:30")  -->
         <entry name="session5hResetMode" type="String">
             <default>timeLeft</default>
+        </entry>
+        <entry name="session1wResetMode" type="String">
+            <default>exactDate</default>
+        </entry>
+        <entry name="colorTheme" type="String">
+            <default>original</default>
         </entry>
     </group>
 </kcfg>

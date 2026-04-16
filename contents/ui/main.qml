@@ -2,9 +2,16 @@ import QtQuick
 import QtQuick.Layouts
 import org.kde.plasma.plasma5support as PlasmaCore
 import org.kde.plasma.plasmoid
+import org.kde.kirigami as Kirigami
+import org.kde.plasma.components 3.0 as PlasmaComponents3
+
+import "./"
 
 PlasmoidItem {
     id: root
+
+    Kirigami.Theme.inherit: true
+    Kirigami.Theme.colorSet: Kirigami.Theme.Window
 
     // ── Size ────────────────────────────────────────────────────────────────
     preferredRepresentation: fullRepresentation
@@ -25,21 +32,15 @@ PlasmoidItem {
     property int  _tick: 0               // incremented every minute to refresh time labels
     property bool _fetching: false       // guard against concurrent fetches
 
-    // ── Colors ───────────────────────────────────────────────────────────────
-    readonly property color colBg:     "#0d1117"
-    readonly property color colRing:   "#1e2535"
-    readonly property color colGreen:  "#22c55e"
-    readonly property color colYellow: "#f8da19"
-    readonly property color colOrange: "#ff7700"
-    readonly property color colRed:    "#e40000"
-    readonly property color colText:   "#e2e8f0"
-    readonly property color colSub:    "#64748b"
+    ThemeAdapter {
+        id: themeAdapter
+    }
 
     function colorFor(pct) {
-        if (pct < 0.5)  return colGreen
-        if (pct < 0.75) return colYellow
-        if (pct < 0.9)  return colOrange
-        return colRed
+        if (pct < 0.5)  return themeAdapter.green
+        if (pct < 0.75) return themeAdapter.yellow
+        if (pct < 0.9)  return themeAdapter.orange
+        return themeAdapter.red
     }
 
     // Relative time remaining: "1h 23m", "45m", "now"
@@ -51,6 +52,19 @@ PlasmoidItem {
         var h = Math.floor(secs / 3600);  secs %= 3600
         var m = Math.floor(secs / 60)
         if (d > 0) return d + "d " + h + "h"
+        if (h > 0) return h + "h " + m + "m"
+        return m + "m"
+    }
+
+    // Weekly version: show only days if > 24h, else hours + minutes
+    function formatTimeLeftWeekly(iso) {
+        if (!iso) return "–"
+        var secs = Math.floor((new Date(iso) - new Date()) / 1000)
+        if (secs <= 0) return "now"
+        var d = Math.floor(secs / 86400)
+        if (d >= 1) return d + "d"
+        var h = Math.floor(secs / 3600); secs %= 3600
+        var m = Math.floor(secs / 60)
         if (h > 0) return h + "h " + m + "m"
         return m + "m"
     }
@@ -145,7 +159,7 @@ PlasmoidItem {
     // ── Full representation ──────────────────────────────────────────────────
     fullRepresentation: Rectangle {
         id: card
-        color:        root.colBg
+        color:        themeAdapter.bg
         radius:       16
         anchors.fill: parent
 
@@ -173,30 +187,30 @@ PlasmoidItem {
 
                 Rectangle {
                     width: 6; height: 6; radius: 3
-                    color: root.loaded ? root.colGreen : root.colSub
+                    color: root.loaded ? themeAdapter.green : themeAdapter.subText
                     Behavior on color { ColorAnimation { duration: 600 } }
                 }
 
-                Text {
+                PlasmaComponents3.Label {
                     text: "Claude AI Usage"
-                    color: root.colText
+                    color: themeAdapter.text
                     font.pixelSize: 13
                     font.weight: Font.Medium
                     font.family: "monospace"
                     Layout.fillWidth: true
                 }
 
-                Text {
+                PlasmaComponents3.Label {
                     text: "↻"
-                    color: root.colSub
+                    color: themeAdapter.subText
                     font.pixelSize: 14
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
                         onClicked: doFetch()
                         hoverEnabled: true
-                        onEntered: parent.color = root.colText
-                        onExited:  parent.color = root.colSub
+                        onEntered: parent.color = themeAdapter.text
+                        onExited:  parent.color = themeAdapter.subText
                     }
                 }
             }
@@ -212,15 +226,21 @@ PlasmoidItem {
                     Layout.fillHeight: true
                     label:    "session"
                     value:    root.usage5h
-                    accent:   root.colorFor(root.usage5h)
-                    ringBg:   root.colRing
+                    accent: {
+                        var pct = root.usage5h
+                        if (pct < 0.5)  return themeAdapter.green
+                        if (pct < 0.75) return themeAdapter.yellow
+                        if (pct < 0.9)  return themeAdapter.orange
+                        return themeAdapter.red
+                    }
+                    ringBg:   themeAdapter.ring
                     resetIn:  (root._tick,
-                              Plasmoid.configuration.session5hResetMode === "exactTime"
+                              plasmoid.configuration.session5hResetMode === "exactTime"
                               ? root.formatResetTime(root.reset5h)
                               : root.formatTimeLeft(root.reset5h))
                     errMode:  !root.loaded
-                    subColor: root.colSub
-                    textColor: root.colText
+                    subColor: themeAdapter.subText
+                    textColor: themeAdapter.text
                 }
 
                 Rectangle {
@@ -234,17 +254,26 @@ PlasmoidItem {
                     Layout.fillHeight: true
                     label:    "weekly"
                     value:    root.usage7d
-                    accent:   root.colorFor(root.usage7d)
-                    ringBg:   root.colRing
-                    resetIn:  root.formatResetDate(root.reset7d)
+                    accent: {
+                        var pct = root.usage7d
+                        if (pct < 0.5)  return themeAdapter.green
+                        if (pct < 0.75) return themeAdapter.yellow
+                        if (pct < 0.9)  return themeAdapter.orange
+                        return themeAdapter.red
+                    }
+                    ringBg:   themeAdapter.ring
+                    resetIn:  (root._tick,
+                               plasmoid.configuration.session1wResetMode === "timeLeft"
+                               ? root.formatTimeLeftWeekly(root.reset7d)
+                               : root.formatResetDate(root.reset7d))
                     errMode:  !root.loaded
-                    subColor: root.colSub
-                    textColor: root.colText
+                    subColor: themeAdapter.subText
+                    textColor: themeAdapter.text
                 }
             }
 
             // ── Error / status strip ─────────────────────────────────────────
-            Text {
+            PlasmaComponents3.Label {
                 visible: root.errorMsg !== ""
                 text: {
                     switch (root.errorMsg) {
@@ -254,7 +283,7 @@ PlasmoidItem {
                         default:           return "⚠  " + root.errorMsg
                     }
                 }
-                color: root.colOrange
+                color: themeAdapter.orange
                 font.pixelSize: 10
                 font.family: "monospace"
                 Layout.fillWidth: true
@@ -269,10 +298,10 @@ PlasmoidItem {
             anchors.fill: parent
             onClicked: root.expanded = !root.expanded
         }
-        Text {
+        PlasmaComponents3.Label {
             anchors.centerIn: parent
             text: root.loaded ? Math.round(root.usage5h * 100) + "%" : "…"
-            color: root.loaded ? root.colorFor(root.usage5h) : root.colSub
+            color: root.loaded ? root.colorFor(root.usage5h) : themeAdapter.subText
             font.pixelSize: 11
             font.weight: Font.Bold
             font.family: "monospace"

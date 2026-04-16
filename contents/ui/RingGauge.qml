@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import org.kde.plasma.components 3.0 as PlasmaComponents3
 
 // ── RingGauge ────────────────────────────────────────────────────────────────
 // A circular arc progress gauge matching the screenshot aesthetic.
@@ -67,7 +68,7 @@ Item {
                         startDeg * toRad,
                         (startDeg + sweepDeg) * toRad,
                         false)
-                ctx.strokeStyle = gauge.ringBg.toString()
+                ctx.strokeStyle = "" + gauge.ringBg
                 ctx.lineWidth   = sw
                 ctx.lineCap     = "round"
                 ctx.stroke()
@@ -77,7 +78,7 @@ Item {
                     var filledDeg = sweepDeg * gauge.animValue
 
                     // subtle glow
-                    ctx.shadowColor = gauge.accent.toString()
+                    ctx.shadowColor = "" + gauge.accent
                     ctx.shadowBlur  = 8
 
                     ctx.beginPath()
@@ -86,7 +87,7 @@ Item {
                             startDeg * toRad,
                             (startDeg + filledDeg) * toRad,
                             false)
-                    ctx.strokeStyle = gauge.accent.toString()
+                    ctx.strokeStyle = "" + gauge.accent
                     ctx.lineWidth   = sw
                     ctx.lineCap     = "round"
                     ctx.stroke()
@@ -98,6 +99,7 @@ Item {
                 target: gauge
                 function onAnimValueChanged() { canvas.requestPaint() }
                 function onAccentChanged()    { canvas.requestPaint() }
+                function onRingBgChanged()    { canvas.requestPaint() }
                 function onErrModeChanged()   { canvas.requestPaint() }
             }
 
@@ -106,7 +108,7 @@ Item {
                 anchors.centerIn: parent
                 spacing: 0
 
-                Text {
+                PlasmaComponents3.Label {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: gauge.errMode ? "–" : Math.round(gauge.animValue * 100) + "%"
                     color: gauge.errMode ? gauge.subColor : gauge.textColor
@@ -117,7 +119,7 @@ Item {
                     Behavior on color { ColorAnimation { duration: 400 } }
                 }
 
-                Text {
+                PlasmaComponents3.Label {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: gauge.errMode ? "" : gauge.resetIn
                     color: gauge.subColor
@@ -137,7 +139,7 @@ Item {
             implicitWidth:  labelText.implicitWidth  + 12
             implicitHeight: labelText.implicitHeight + 6
 
-            Text {
+            PlasmaComponents3.Label {
                 id: labelText
                 anchors.centerIn: parent
                 text: gauge.label
