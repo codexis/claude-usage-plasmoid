@@ -10,12 +10,14 @@ echo "╚═══════════════════════�
 echo ""
 
 # Make fetch script executable
-chmod +x "$PLASMOID_DIR/contents/code/fetch_usage.py"
+chmod +x "$PLASMOID_DIR/package/contents/code/fetch_usage.py"
 
 # Remove stale installation so --install always works cleanly
 INSTALL_DIR="$HOME/.local/share/plasma/plasmoids/$APP_ID"
-if [ -d "$INSTALL_DIR" ]; then
-    echo "▸ Removing old installation…"
+echo "▸ Removing old installation…"
+if command -v kpackagetool6 &>/dev/null; then
+    kpackagetool6 --type Plasma/Applet --remove "$APP_ID" 2>/dev/null || true
+elif [ -d "$INSTALL_DIR" ]; then
     rm -rf "$INSTALL_DIR"
 fi
 
@@ -25,7 +27,7 @@ echo "▸ Clearing widget QML cache…"
 QML_UI_DIR="$HOME/.local/share/plasma/plasmoids/$APP_ID/contents/ui"
 for CACHE_DIR in "$HOME/.cache/plasmashell/qmlcache" "$HOME/.cache/plasmawindowed/qmlcache"; do
     [ -d "$CACHE_DIR" ] || continue
-    for QML_FILE in main.qml RingGauge.qml configGeneral.qml; do
+    for QML_FILE in main.qml RingGauge.qml configGeneral.qml ThemeAdapter.qml configAppearance.qml; do
         HASH=$(echo -n "$QML_UI_DIR/$QML_FILE" | sha1sum | cut -d' ' -f1)
         rm -f "$CACHE_DIR/$HASH.qmlc"
     done
@@ -35,13 +37,13 @@ echo "▸ Installing plasmoid…"
 
 if command -v kpackagetool6 &>/dev/null; then
     echo "  using kpackagetool6 (Plasma 6)"
-    kpackagetool6 --type Plasma/Applet --install "$PLASMOID_DIR"
+    kpackagetool6 --type Plasma/Applet --install "$PLASMOID_DIR/package"
 elif command -v plasmapkg2 &>/dev/null; then
     echo "  using plasmapkg2 (Plasma 5)"
-    plasmapkg2 --install "$PLASMOID_DIR"
+    plasmapkg2 --install "$PLASMOID_DIR/package"
 elif command -v kpackagetool5 &>/dev/null; then
     echo "  using kpackagetool5 (Plasma 5)"
-    kpackagetool5 --install "$PLASMOID_DIR"
+    kpackagetool5 --install "$PLASMOID_DIR/package"
 else
     echo "ERROR: no plasma package tool found (kpackagetool6 / plasmapkg2 / kpackagetool5)" >&2
     exit 1

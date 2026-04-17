@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import org.kde.kirigami as Kirigami
 import org.kde.plasma.components 3.0 as PlasmaComponents3
 
 // ── RingGauge ────────────────────────────────────────────────────────────────
@@ -45,21 +46,22 @@ Item {
             id: canvas
             Layout.fillWidth:  true
             Layout.fillHeight: true
+            renderTarget: Canvas.FramebufferObject
 
             onPaint: {
-                var ctx = getContext("2d")
+                const ctx = getContext("2d")
                 ctx.clearRect(0, 0, width, height)
                 ctx.shadowBlur = 0   // reset state from previous paint
 
-                var cx = width  / 2
-                var cy = height / 2
-                var r  = Math.min(width, height) * 0.5 - gauge.strokeW / 2 - 4
-                var sw = gauge.strokeW
-                var toRad = Math.PI / 180
+                const cx     = width  / 2
+                const cy     = height / 2
+                const r      = Math.min(width, height) * 0.5 - gauge.strokeW / 2 - 4
+                const sw     = gauge.strokeW
+                const toRad  = Math.PI / 180
 
                 // degrees → radians offset (canvas 0° = 3-o'clock)
-                var startDeg = gauge.startAngle - 90   // rotate so start is top-left
-                var sweepDeg = gauge.sweepTotal
+                const startDeg = gauge.startAngle - 90   // rotate so start is top-left
+                const sweepDeg = gauge.sweepTotal
 
                 // ── Background ring ──────────────────────────────────────────
                 ctx.beginPath()
@@ -75,7 +77,7 @@ Item {
 
                 // ── Foreground arc ───────────────────────────────────────────
                 if (!gauge.errMode && gauge.animValue > 0) {
-                    var filledDeg = sweepDeg * gauge.animValue
+                    const filledDeg = sweepDeg * gauge.animValue
 
                     // subtle glow
                     ctx.shadowColor = "" + gauge.accent
@@ -114,7 +116,7 @@ Item {
                     color: gauge.errMode ? gauge.subColor : gauge.textColor
                     font.pixelSize: Math.min(canvas.width, canvas.height) * 0.22
                     font.weight: Font.Bold
-                    font.family: "monospace"
+                    font.family: (Kirigami.Theme.fixedWidthFont && Kirigami.Theme.fixedWidthFont.family) ? Kirigami.Theme.fixedWidthFont.family : "monospace"
 
                     Behavior on color { ColorAnimation { duration: 400 } }
                 }
@@ -125,27 +127,27 @@ Item {
                     color: gauge.subColor
                     font.pixelSize: Math.min(canvas.width, canvas.height) * 0.10
                     font.weight: Font.Normal
-                    font.family: "monospace"
+                    font.family: (Kirigami.Theme.fixedWidthFont && Kirigami.Theme.fixedWidthFont.family) ? Kirigami.Theme.fixedWidthFont.family : "monospace"
                     opacity: 0.9
                 }
             }
         }
 
-        // ── Window label (session / weekly) ───────────────────────────────────
         Rectangle {
             Layout.alignment: Qt.AlignHCenter
-            color: Qt.rgba(1, 1, 1, 0.05)
-            radius: 4
-            implicitWidth:  labelText.implicitWidth  + 12
-            implicitHeight: labelText.implicitHeight + 6
+            color: Kirigami.Theme.alternateBackgroundColor
+            opacity: 0.3
+            radius: Kirigami.Units.smallSpacing / 2
+            implicitWidth:  labelText.implicitWidth  + Kirigami.Units.smallSpacing * 2
+            implicitHeight: labelText.implicitHeight + Kirigami.Units.smallSpacing
 
             PlasmaComponents3.Label {
                 id: labelText
                 anchors.centerIn: parent
                 text: gauge.label
                 color: gauge.subColor
-                font.pixelSize: 9
-                font.family: "monospace"
+                font.pixelSize: Kirigami.Theme.smallFont.pixelSize
+                font.family: (Kirigami.Theme.fixedWidthFont && Kirigami.Theme.fixedWidthFont.family) ? Kirigami.Theme.fixedWidthFont.family : "monospace"
                 opacity: 0.8
             }
         }

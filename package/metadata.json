@@ -13,7 +13,7 @@
         "License": "MIT",
         "Name": "Claude AI Usage",
         "Version": "1.0.0",
-        "Website": ""
+        "Website": "https://github.com/codexis/claude-usage-plasmoid"
     },
     "X-Plasma-API-Minimum-Version": "6.0"
 }

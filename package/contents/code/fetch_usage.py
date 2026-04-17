@@ -2,16 +2,29 @@
 """
 Fetches Claude AI usage data and prints JSON to stdout.
 Called by the Plasma widget via DataSource.
+Pass --debug to get verbose logging on stderr.
 """
 import json
-import urllib.request
-import urllib.error
+import logging
+import socket
 import ssl
+import sys
+import urllib.error
+import urllib.request
 from pathlib import Path
+
+logging.basicConfig(
+    stream=sys.stderr,
+    level=logging.DEBUG if "--debug" in sys.argv else logging.WARNING,
+    format="%(levelname)s %(message)s",
+)
 
 USAGE_API_URL = "https://api.anthropic.com/api/oauth/usage"
 CREDENTIALS_FILE = Path.home() / ".claude" / ".credentials.json"
 CONFIG_FILE = Path.home() / ".config" / "claude-usage-widget" / "config.json"
+
+# Keep in sync with the API rollout date shown in Claude Code OAuth docs.
+ANTHROPIC_BETA = "oauth-2025-04-20"
 
 
 def load_token():
@@ -21,16 +34,16 @@ def load_token():
             token = data.get("claudeAiOauth", {}).get("accessToken")
             if token and token.strip():
                 return token.strip()
-        except Exception:
-            pass
+        except Exception as e:
+            logging.debug("Could not read credentials file: %s", e)
     if CONFIG_FILE.exists():
         try:
             data = json.loads(CONFIG_FILE.read_text())
             token = data.get("oauth_token")
             if token and token.strip():
                 return token.strip()
-        except Exception:
-            pass
+        except Exception as e:
+            logging.debug("Could not read config file: %s", e)
     return None
 
 
@@ -39,7 +52,7 @@ def fetch_usage(token):
         "Accept": "application/json",
         "User-Agent": "claude-usage-widget/1.0",
         "Authorization": f"Bearer {token}",
-        "anthropic-beta": "oauth-2025-04-20",
+        "anthropic-beta": ANTHROPIC_BETA,
     }
     req = urllib.request.Request(USAGE_API_URL, headers=headers, method="GET")
     ctx = ssl.create_default_context()
@@ -57,18 +70,23 @@ def main():
         data = fetch_usage(token)
         print(json.dumps(data))
     except urllib.error.HTTPError as e:
-        print(json.dumps({"error": f"http_{e.code}"}))
-    except urllib.error.URLError as e:
-        reason = e.reason
-        if hasattr(reason, "errno"):
-            msg = "no network" if reason.errno in (-2, -3, 11001) else f"network error ({reason.errno})"
+        logging.debug("HTTP error %s: %s", e.code, e)
+        if e.code in (401, 403):
+            print(json.dumps({"error": "auth_error"}))
         else:
-            msg = "connection failed"
+            print(json.dumps({"error": f"http_{e.code}"}))
+    except urllib.error.URLError as e:
+        logging.debug("URL error: %s", e)
+        if isinstance(e.reason, socket.gaierror):
+            msg = "no network"
+        else:
+            msg = f"network: {e.reason}"
         print(json.dumps({"error": msg}))
     except TimeoutError:
         print(json.dumps({"error": "timeout"}))
-    except Exception:
-        print(json.dumps({"error": "unexpected error"}))
+    except Exception as e:
+        logging.exception("Unexpected error")
+        print(json.dumps({"error": f"unexpected: {type(e).__name__}"}))
 
 
 if __name__ == "__main__":
