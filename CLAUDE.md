@@ -27,15 +27,26 @@ kpackagetool6 --type Plasma/Applet --remove io.github.codexis.claudeusage
 This is a **KDE Plasma 6 plasmoid** (package ID `io.github.codexis.claudeusage`). The package layout follows the KDE Plasma standard:
 
 ```
-metadata.json              — package identity, ID, version
-config/main.xml            — typed settings schema (KConfig XT)
-contents/
-  ui/
-    main.qml               — root PlasmoidItem; all state lives here
-    RingGauge.qml          — reusable Canvas-based ring component
-    configGeneral.qml      — settings dialog (General tab)
-  code/
-    fetch_usage.py         — Python 3 script; prints JSON to stdout
+
+package/
+  contents/
+    code/
+      fetch_usage.py       — Python 3 script; fetches usage from Anthropic API, prints JSON to stdout
+      timeUtils.js         — shared JS helpers: time formatting, color calculation
+    config/
+      main.xml             — typed settings schema (KConfig XT)
+      config.qml           — declares config pages (General, Appearance)
+    ui/
+      main.qml             — root PlasmoidItem; all state, timers, data parsing live here
+      RingGauge.qml        — reusable Canvas-based animated ring component
+      ThemeAdapter.qml     — resolves colors for Claude Dark vs System Native theme
+      configGeneral.qml    — settings dialog: General tab (reset mode)
+      configAppearance.qml — settings dialog: Appearance tab (theme selector)
+  metadata.json            — package identity, ID, version, author
+tests/
+  js/                      — Jest unit tests for JS business logic (timeUtils.js)
+  python/                  — unittest tests for fetch_usage.py
+  qml/                     — QtTest/qmltestrunner tests for QML/JS components
 ```
 
 ### Data flow
@@ -57,3 +68,28 @@ contents/
 Drawn on a `Canvas` element. Key geometry properties: `startAngle` (–220°, top-left), `sweepTotal` (260°), `strokeW` (8 px). The filled arc length is `sweepTotal * animValue`. Value changes animate via `Behavior on animValue`.
 
 The `resetIn` string property is the only text the gauge displays below the percentage — formatting is entirely the caller's responsibility (`main.qml` switches between `formatTimeLeft` / `formatResetTime` / `formatResetDate`).
+
+## Testing
+
+The project has three test suites that run automatically in CI (GitHub Actions on every push/PR to `main`).
+
+### JavaScript (Jest)
+
+```bash
+npm install
+npm test
+```
+
+### Python (unittest)
+
+```bash
+python3 -m unittest discover tests/python
+```
+
+### QML (QtTest / qmltestrunner)
+
+```bash
+qmltestrunner tests/qml/tst_timeUtils.qml
+```
+
+Requires `qt6-declarative-dev` (or equivalent) with `qmltestrunner` available.

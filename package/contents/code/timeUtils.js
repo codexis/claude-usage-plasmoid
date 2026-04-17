@@ -1,8 +1,8 @@
 .pragma library
 
-function formatTimeLeft(iso) {
+function formatTimeLeft(iso, now) {
     if (!iso) return "\u2013"
-    let secs = Math.floor((new Date(iso) - new Date()) / 1000)
+    let secs = Math.floor((new Date(iso) - (now || new Date())) / 1000)
     if (secs <= 0) return "now"
     const d = Math.floor(secs / 86400); secs %= 86400
     const h = Math.floor(secs / 3600);  secs %= 3600
@@ -12,9 +12,9 @@ function formatTimeLeft(iso) {
     return m + "m"
 }
 
-function formatTimeLeftWeekly(iso) {
+function formatTimeLeftWeekly(iso, now) {
     if (!iso) return "\u2013"
-    let secs = Math.floor((new Date(iso) - new Date()) / 1000)
+    let secs = Math.floor((new Date(iso) - (now || new Date())) / 1000)
     if (secs <= 0) return "now"
     const d = Math.floor(secs / 86400)
     if (d >= 1) return d + "d"

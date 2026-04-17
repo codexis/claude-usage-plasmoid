@@ -79,7 +79,20 @@ cat > ~/.config/claude-usage-widget/config.json << 'EOF'
   "oauth_token": "YOUR_TOKEN_HERE"
 }
 EOF
+chmod 600 ~/.config/claude-usage-widget
 ```
+
+## Testing
+
+The project includes three test suites that run automatically in CI on every push and pull request to `main`.
+
+| Suite | Runner | Command |
+|-------|--------|---------|
+| JavaScript | Jest | `npm install && npm test` |
+| Python | unittest | `python3 -m unittest discover tests/python` |
+| QML | QtTest | `qmltestrunner tests/qml/tst_timeUtils.qml` |
+
+QML tests require `qt6-declarative-dev` (or equivalent) with `qmltestrunner` available.
 
 ## Uninstalling
 

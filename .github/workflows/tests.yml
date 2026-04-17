@@ -1,0 +1,44 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run Python tests
+      run: python3 -m unittest discover tests/python
+
+    - name: Run JS tests
+      run: npm test
+
+    - name: Install Qt6 QML test dependencies
+      run: |
+        sudo add-apt-repository universe -y
+        sudo apt-get update
+        sudo apt-get install -y \
+          qt6-declarative-dev-tools \
+          qml6-module-qttest \
+          qml6-module-qtqml-workerscript \
+          qml6-module-qtquick \
+          qml6-module-qtquick-window \
+          qml6-module-qtquick-controls \
+          xvfb
+
+    - name: Run QML tests
+      run: xvfb-run -a /usr/lib/qt6/bin/qmltestrunner -import /usr/lib/x86_64-linux-gnu/qt6/qml -input tests/qml/tst_timeUtils.qml
