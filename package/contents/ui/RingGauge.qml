@@ -55,7 +55,8 @@ Item {
             onPaint: {
                 const ctx = getContext("2d")
                 ctx.clearRect(0, 0, width, height)
-                ctx.shadowBlur = 0   // reset state from previous paint
+                ctx.shadowBlur  = 0
+                ctx.shadowColor = "transparent"
 
                 const cx     = width  / 2
                 const cy     = height / 2

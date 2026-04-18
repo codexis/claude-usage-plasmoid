@@ -6,13 +6,25 @@
     <kcfgfile name=""/>
     <group name="General">
         <entry name="session5hResetMode" type="String">
-            <default>timeLeft</default>
+            <default>exactTime</default>
         </entry>
         <entry name="session1wResetMode" type="String">
-            <default>exactDate</default>
+            <default>timeLeft</default>
         </entry>
         <entry name="colorTheme" type="String">
-            <default>original</default>
+            <default>plasma</default>
+        </entry>
+        <entry name="customGreen" type="String">
+            <default>#22c55e</default>
+        </entry>
+        <entry name="customYellow" type="String">
+            <default>#f8da19</default>
+        </entry>
+        <entry name="customOrange" type="String">
+            <default>#ff7700</default>
+        </entry>
+        <entry name="customRed" type="String">
+            <default>#e40000</default>
         </entry>
     </group>
 </kcfg>

@@ -20,10 +20,10 @@ PlasmoidItem {
 
     // ── Size ────────────────────────────────────────────────────────────────
     preferredRepresentation: fullRepresentation
-    Layout.minimumWidth:  240
-    Layout.minimumHeight: 160
-    Layout.preferredWidth: 320
-    Layout.preferredHeight: 200
+    Layout.minimumWidth: 400
+    Layout.minimumHeight: 220
+    Layout.preferredWidth: 500
+    Layout.preferredHeight: 300
 
     // ── State ────────────────────────────────────────────────────────────────
     property real usage5h:  0.0   // 0.0 – 1.0
@@ -33,7 +33,7 @@ PlasmoidItem {
     property string errorMsg: ""
     property bool   loaded:   false
 
-    readonly property int kPollBase:      300000   // 5 min
+    readonly property int kPollBase:     300000   // 5 min
     readonly property int kPollMax:     1800000   // 30 min
     readonly property int kTickInterval:  60000   // 1 min
 
@@ -187,7 +187,7 @@ PlasmoidItem {
                 RingGauge {
                     accent: root.colorFor(root.usage5h)
                     errMode:  !root.loaded
-                    label:    i18n("session")
+                    label:    i18n("Session")
                     Layout.fillHeight: true
                     Layout.fillWidth:  true
                     resetIn:  root.computeResetIn5h()
@@ -206,7 +206,7 @@ PlasmoidItem {
                 RingGauge {
                     accent:    root.colorFor(root.usage7d)
                     errMode:   !root.loaded
-                    label:     i18n("weekly")
+                    label:     i18n("Weekly")
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     resetIn:   root.computeResetIn7d()
@@ -225,11 +225,11 @@ PlasmoidItem {
                 Layout.fillWidth: true
                 text: {
                     switch (root.errorMsg) {
-                        case "no_token":   return i18n("⚠  No token — install Claude Code or add token to config")
+                        case "no_token":   return i18n("⚠  No token — install Claude Code or add token to config file")
                         case "no network": return i18n("⚠  No network connection")
                         case "timeout":    return i18n("⚠  Request timed out")
                         case "auth_error": return i18n("⚠  Token invalid or expired — re-login to Claude Code")
-                        case "rate_limit": return i18n("⚠  Rate limit — next retry in %1m", root._rateLimitRetry)
+                        case "rate_limit": return i18n("⚠  Rate limited — retry in %1 min", root._rateLimitRetry)
                         default:           return i18n("⚠  %1", root.errorMsg)
                     }
                 }

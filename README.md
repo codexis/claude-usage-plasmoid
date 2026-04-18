@@ -17,7 +17,7 @@ A KDE Plasma 6 plasmoid that displays your Claude AI usage as animated circular 
 - **Session ring** — usage % + time remaining/exact reset time
 - **Weekly ring** — usage % + refined remaining time (days or hours/mins) or exact reset date
 - **Dynamic colors** — green → yellow → orange → red based on utilization
-- **Customizable Appearance** — choose between the **Claude Dark** (Original) aesthetic or a **System Native** theme that follows your Plasma colors (Light or Dark)
+- **Customizable Appearance** — **Follow System Theme** (default, follows your Plasma Light/Dark theme) or **Custom Colors** with per-threshold color pickers; text colors always follow the system theme
 - **Automatic polling** — updates every **5 minutes** with automatic back-off on rate limits
 
 ## Requirements

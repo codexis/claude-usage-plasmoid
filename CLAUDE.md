@@ -39,9 +39,9 @@ package/
     ui/
       main.qml             — root PlasmoidItem; all state, timers, data parsing live here
       RingGauge.qml        — reusable Canvas-based animated ring component
-      ThemeAdapter.qml     — resolves colors for Claude Dark vs System Native theme
+      ThemeAdapter.qml     — resolves colors for Custom Colors vs Follow System Theme; text/subText/error always system, arc colors from plasmoid.configuration in custom mode
       configGeneral.qml    — settings dialog: General tab (reset mode)
-      configAppearance.qml — settings dialog: Appearance tab (theme selector)
+      configAppearance.qml — settings dialog: Appearance tab (theme selector + color pickers for Custom mode)
   metadata.json            — package identity, ID, version, author
 tests/
   js/                      — Jest unit tests for JS business logic (timeUtils.js)
@@ -61,7 +61,10 @@ tests/
 
 - Settings are declared in `config/main.xml` and read in QML as `Plasmoid.configuration.<key>`.
 - `configGeneral.qml` exposes properties named `cfg_<key>` — Plasma syncs these automatically to/from the config store.
-- Currently: `session5hResetMode` (`"timeLeft"` | `"exactTime"`) controls the label shown below the session ring percentage.
+- `session5hResetMode` (`"timeLeft"` | `"exactTime"`) controls the label shown below the session ring percentage.
+- `colorTheme` (`"plasma"` default | `"original"`) selects Follow System Theme vs Custom Colors.
+- `customGreen/Yellow/Orange/Red` — user-configurable arc colors for the Custom Colors theme (Low / Medium / High / Critical thresholds).
+- `ThemeAdapter.qml` exposes an `isCustom` boolean; text/subText/error/separator always come from `Kirigami.Theme` regardless of mode — only arc colors (`green/yellow/orange/red`) and backgrounds (`bg/ring`) switch.
 
 ### RingGauge
 

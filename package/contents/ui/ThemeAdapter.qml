@@ -5,40 +5,20 @@ import org.kde.plasma.plasmoid
 QtObject {
     id: root
 
-    property string mode: plasmoid.configuration.colorTheme || "plasma"
+    readonly property bool isCustom: (plasmoid.configuration.colorTheme || "plasma") !== "plasma"
 
-    // System colors from Kirigami Theme
-    property color sysBg: Kirigami.Theme.backgroundColor
-    property color sysRing: Kirigami.Theme.alternateBackgroundColor
-    property color sysGreen: Kirigami.Theme.positiveTextColor
-    property color sysYellow: Kirigami.Theme.highlightColor
-    property color sysOrange: Qt.darker(Kirigami.Theme.neutralTextColor, 1.15)
-    property color sysRed: Kirigami.Theme.negativeTextColor
-    property color sysText: Kirigami.Theme.textColor
-    property color sysSubText: Kirigami.Theme.disabledTextColor
-    property color sysError: Kirigami.Theme.negativeTextColor
-
-    // Original dark aesthetic colors
-    readonly property color origBg: "#0d1117"
-    readonly property color origRing: "#1e2535"
-    readonly property color origGreen: "#22c55e"
-    readonly property color origYellow: "#f8da19"
-    readonly property color origOrange: "#ff7700"
-    readonly property color origRed: "#e40000"
-    readonly property color origText: "#e2e8f0"
-    readonly property color origSubText: "#64748b"
-
-    // Effective Palette
-    property color bg:      mode === "plasma" ? sysBg      : origBg
-    property color ring:    mode === "plasma" ? sysRing    : origRing
-    property color green:   mode === "plasma" ? sysGreen   : origGreen
-    property color yellow:  mode === "plasma" ? sysYellow  : origYellow
-    property color orange:  mode === "plasma" ? sysOrange  : origOrange
-    property color red:     mode === "plasma" ? sysRed     : origRed
-    property color text:    mode === "plasma" ? sysText    : origText
-    property color subText: mode === "plasma" ? sysSubText : origSubText
-    property color error:     mode === "plasma" ? sysError   : origOrange
-    property color separator: Qt.rgba(sysText.r, sysText.g, sysText.b, 0.15)
-
+    // Always system colors
+    property color bg:        Kirigami.Theme.backgroundColor
+    property color ring:      Kirigami.Theme.alternateBackgroundColor
+    property color text:      Kirigami.Theme.textColor
+    property color subText:   Kirigami.Theme.disabledTextColor
+    property color error:     Kirigami.Theme.negativeTextColor
+    property color separator: Qt.rgba(Kirigami.Theme.textColor.r, Kirigami.Theme.textColor.g, Kirigami.Theme.textColor.b, 0.15)
     readonly property string monoFamily: (Kirigami.Theme.fixedWidthFont && Kirigami.Theme.fixedWidthFont.family) ? Kirigami.Theme.fixedWidthFont.family : "monospace"
+
+    // Arc colors: system semantic or user config with defaults
+    property color green:  isCustom ? (plasmoid.configuration.customGreen  || "#22c55e") : Kirigami.Theme.positiveTextColor
+    property color yellow: isCustom ? (plasmoid.configuration.customYellow || "#f8da19") : "#f8da19"
+    property color orange: isCustom ? (plasmoid.configuration.customOrange || "#ff7700") : Kirigami.Theme.neutralTextColor
+    property color red:    isCustom ? (plasmoid.configuration.customRed    || "#e40000") : Kirigami.Theme.negativeTextColor
 }
