@@ -17,6 +17,11 @@ TestCase {
         compare(TimeUtils.formatTimeLeft(past.toISOString(), fixedNow), "now")
     }
 
+    function test_formatTimeLeft_sub_minute() {
+        var future = new Date(fixedNow.getTime() + 30 * 1000)
+        compare(TimeUtils.formatTimeLeft(future.toISOString(), fixedNow), "now")
+    }
+
     function test_formatTimeLeft_minutes() {
         var future = new Date(fixedNow.getTime() + 5 * 60 * 1000)
         compare(TimeUtils.formatTimeLeft(future.toISOString(), fixedNow), "5m")

@@ -70,11 +70,13 @@ Item {
 
                 // ── Background ring ──────────────────────────────────────────
                 ctx.beginPath()
-                ctx.arc(cx, cy,
+                ctx.arc(cx,
+                        cy,
                         r,
                         startDeg * toRad,
                         (startDeg + sweepDeg) * toRad,
-                        false)
+                        false
+                )
                 ctx.strokeStyle = "" + gauge.ringBg
                 ctx.lineWidth   = sw
                 ctx.lineCap     = "round"
@@ -89,11 +91,13 @@ Item {
                     ctx.shadowBlur  = 8
 
                     ctx.beginPath()
-                    ctx.arc(cx, cy,
+                    ctx.arc(cx,
+                            cy,
                             r,
                             startDeg * toRad,
                             (startDeg + filledDeg) * toRad,
-                            false)
+                            false
+                    )
                     ctx.strokeStyle = "" + gauge.accent
                     ctx.lineWidth   = sw
                     ctx.lineCap     = "round"
@@ -119,7 +123,10 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: gauge.errMode ? "–" : Math.round(gauge.animValue * 100) + "%"
                     color: gauge.errMode ? gauge.subColor : gauge.textColor
-                    font.pixelSize: Math.min(canvas.width, canvas.height) * 0.22
+                    font.pixelSize: Math.max(
+                        Math.min(canvas.width, canvas.height) * 0.22,
+                        Kirigami.Theme.defaultFont.pixelSize
+                    )
                     font.weight: Font.Bold
                     font.family: gauge.monoFamily
 
@@ -130,8 +137,10 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: gauge.errMode ? "" : gauge.resetIn
                     color: gauge.subColor
-                    font.pixelSize: Math.max(Math.min(canvas.width, canvas.height) * 0.10,
-                                             Kirigami.Theme.smallFont.pixelSize)
+                    font.pixelSize: Math.max(
+                        Math.min(canvas.width, canvas.height) * 0.10,
+                        Kirigami.Theme.smallFont.pixelSize
+                    )
                     font.weight: Font.Normal
                     font.family: gauge.monoFamily
                     opacity: 0.9

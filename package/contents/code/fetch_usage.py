@@ -102,6 +102,8 @@ def main():
         logging.debug("URL error: %s", e)
         if isinstance(e.reason, socket.gaierror):
             msg = "no network"
+        elif isinstance(e.reason, TimeoutError):
+            msg = "timeout"
         else:
             msg = f"network: {e.reason}"
         print(json.dumps({"error": msg}))

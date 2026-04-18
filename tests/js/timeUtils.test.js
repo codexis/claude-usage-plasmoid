@@ -38,7 +38,7 @@ describe('timeUtils.js', () => {
 
         test('returns "now" for time less than a minute in the future', () => {
             const soon = new Date(mockNow.getTime() + 30 * 1000).toISOString();
-            expect(TimeUtils.formatTimeLeft(soon)).toBe('0m');
+            expect(TimeUtils.formatTimeLeft(soon)).toBe('now');
         });
 
         test('formats minutes', () => {

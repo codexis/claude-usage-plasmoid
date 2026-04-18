@@ -71,6 +71,7 @@ class TestFetchUsage(unittest.TestCase):
         self.assertEqual(data, {"usage": "test"})
 
 
+@patch('fetch_usage.MOCK_RESPONSE', None)
 class TestMain(unittest.TestCase):
     @patch('fetch_usage.load_token')
     @patch('fetch_usage.fetch_usage')
@@ -146,6 +147,17 @@ class TestMain(unittest.TestCase):
     @patch('fetch_usage.fetch_usage')
     @patch('builtins.print')
     def test_main_timeout(self, mock_print, mock_fetch, mock_load):
+        mock_load.return_value = "token"
+        # urlopen wraps socket.timeout inside URLError — simulate that
+        mock_fetch.side_effect = urllib.error.URLError(socket.timeout("timed out"))
+
+        fetch_usage.main()
+        mock_print.assert_called_once_with(json.dumps({"error": "timeout"}))
+
+    @patch('fetch_usage.load_token')
+    @patch('fetch_usage.fetch_usage')
+    @patch('builtins.print')
+    def test_main_timeout_direct(self, mock_print, mock_fetch, mock_load):
         mock_load.return_value = "token"
         mock_fetch.side_effect = TimeoutError()
 

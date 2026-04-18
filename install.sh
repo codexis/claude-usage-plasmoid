@@ -27,10 +27,11 @@ echo "▸ Clearing widget QML cache…"
 QML_UI_DIR="$HOME/.local/share/plasma/plasmoids/$APP_ID/contents/ui"
 for CACHE_DIR in "$HOME/.cache/plasmashell/qmlcache" "$HOME/.cache/plasmawindowed/qmlcache"; do
     [ -d "$CACHE_DIR" ] || continue
-    for QML_FILE in main.qml RingGauge.qml configGeneral.qml ThemeAdapter.qml configAppearance.qml; do
+    while IFS= read -r -d '' QML_PATH; do
+        QML_FILE=$(basename "$QML_PATH")
         HASH=$(echo -n "$QML_UI_DIR/$QML_FILE" | sha1sum | cut -d' ' -f1)
         rm -f "$CACHE_DIR/$HASH.qmlc"
-    done
+    done < <(find "$PLASMOID_DIR/package/contents/ui" -maxdepth 1 -name "*.qml" -print0)
 done
 
 echo "▸ Installing plasmoid…"

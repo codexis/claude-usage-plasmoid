@@ -132,8 +132,11 @@ PlasmoidItem {
     Timer {
         interval: root.kTickInterval
         repeat:   true
-        running:  root.loaded
-        onTriggered: root._tick = (root._tick + 1) % 1440
+        running:  true
+        onTriggered: {
+            root._tick = (root._tick + 1) % 1440
+            if (root._rateLimitRetry > 0) root._rateLimitRetry -= 1
+        }
     }
 
     Component.onCompleted: doFetch()
