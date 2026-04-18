@@ -11,11 +11,12 @@ QtObject {
     property color sysBg: Kirigami.Theme.backgroundColor
     property color sysRing: Kirigami.Theme.alternateBackgroundColor
     property color sysGreen: Kirigami.Theme.positiveTextColor
-    property color sysYellow: Kirigami.Theme.warningTextColor
-    property color sysOrange: Kirigami.Theme.neutralTextColor
+    property color sysYellow: Kirigami.Theme.highlightColor
+    property color sysOrange: Qt.darker(Kirigami.Theme.neutralTextColor, 1.15)
     property color sysRed: Kirigami.Theme.negativeTextColor
     property color sysText: Kirigami.Theme.textColor
     property color sysSubText: Kirigami.Theme.disabledTextColor
+    property color sysError: Kirigami.Theme.negativeTextColor
 
     // Original dark aesthetic colors
     readonly property color origBg: "#0d1117"
@@ -36,6 +37,8 @@ QtObject {
     property color red:     mode === "plasma" ? sysRed     : origRed
     property color text:    mode === "plasma" ? sysText    : origText
     property color subText: mode === "plasma" ? sysSubText : origSubText
+    property color error:     mode === "plasma" ? sysError   : origOrange
+    property color separator: Qt.rgba(sysText.r, sysText.g, sysText.b, 0.15)
 
     readonly property string monoFamily: (Kirigami.Theme.fixedWidthFont && Kirigami.Theme.fixedWidthFont.family) ? Kirigami.Theme.fixedWidthFont.family : "monospace"
 }

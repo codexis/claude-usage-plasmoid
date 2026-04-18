@@ -33,9 +33,13 @@ Item {
     onValueChanged: animValue = value
 
     // ring geometry
-    readonly property real strokeW:   8
+    readonly property real strokeW:     8
     readonly property real startAngle: -220   // degrees, top-left start (like screenshot)
-    readonly property real sweepTotal: 260    // degrees of arc total
+    readonly property real sweepTotal:  260   // degrees of arc total
+    readonly property real ringPadding:   4   // gap between stroke edge and canvas boundary
+
+    readonly property string monoFamily: (Kirigami.Theme.fixedWidthFont && Kirigami.Theme.fixedWidthFont.family)
+                                         ? Kirigami.Theme.fixedWidthFont.family : "monospace"
 
     ColumnLayout {
         anchors.fill: parent
@@ -55,7 +59,7 @@ Item {
 
                 const cx     = width  / 2
                 const cy     = height / 2
-                const r      = Math.min(width, height) * 0.5 - gauge.strokeW / 2 - 4
+                const r      = Math.min(width, height) * 0.5 - gauge.strokeW / 2 - gauge.ringPadding
                 const sw     = gauge.strokeW
                 const toRad  = Math.PI / 180
 
@@ -116,18 +120,19 @@ Item {
                     color: gauge.errMode ? gauge.subColor : gauge.textColor
                     font.pixelSize: Math.min(canvas.width, canvas.height) * 0.22
                     font.weight: Font.Bold
-                    font.family: (Kirigami.Theme.fixedWidthFont && Kirigami.Theme.fixedWidthFont.family) ? Kirigami.Theme.fixedWidthFont.family : "monospace"
+                    font.family: gauge.monoFamily
 
-                    Behavior on color { ColorAnimation { duration: 400 } }
+                    Behavior on color { ColorAnimation { duration: 800 } }
                 }
 
                 PlasmaComponents3.Label {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: gauge.errMode ? "" : gauge.resetIn
                     color: gauge.subColor
-                    font.pixelSize: Math.min(canvas.width, canvas.height) * 0.10
+                    font.pixelSize: Math.max(Math.min(canvas.width, canvas.height) * 0.10,
+                                             Kirigami.Theme.smallFont.pixelSize)
                     font.weight: Font.Normal
-                    font.family: (Kirigami.Theme.fixedWidthFont && Kirigami.Theme.fixedWidthFont.family) ? Kirigami.Theme.fixedWidthFont.family : "monospace"
+                    font.family: gauge.monoFamily
                     opacity: 0.9
                 }
             }
@@ -147,7 +152,7 @@ Item {
                 text: gauge.label
                 color: gauge.subColor
                 font.pixelSize: Kirigami.Theme.smallFont.pixelSize
-                font.family: (Kirigami.Theme.fixedWidthFont && Kirigami.Theme.fixedWidthFont.family) ? Kirigami.Theme.fixedWidthFont.family : "monospace"
+                font.family: gauge.monoFamily
                 opacity: 0.8
             }
         }

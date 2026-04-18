@@ -40,6 +40,7 @@ PlasmoidItem {
     property int  _pollInterval: kPollBase
     property int  _tick: 0               // cycles 0–1439, triggers time-label re-eval each minute
     property bool _fetching: false       // guard against concurrent fetches
+    property int  _rateLimitRetry: 0     // minutes until next retry after 429
 
     ThemeAdapter {
         id: themeAdapter
@@ -85,7 +86,8 @@ PlasmoidItem {
                     // back off: double the interval, cap at 30 min
                     root._pollInterval = Math.min(root._pollInterval * 2, root.kPollMax)
                     pollTimer.restart()
-                    root.errorMsg = "rate limit — next retry in " + Math.round(root._pollInterval / 60000) + "m"
+                    root._rateLimitRetry = Math.round(root._pollInterval / 60000)
+                    root.errorMsg = "rate_limit"
                     root.loaded   = false
                 } else if (obj.error) {
                     root.errorMsg = obj.error
@@ -143,13 +145,16 @@ PlasmoidItem {
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: Kirigami.Units.gridUnit
+            anchors.topMargin:    Kirigami.Units.smallSpacing
+            anchors.leftMargin:   Kirigami.Units.gridUnit
+            anchors.rightMargin:  Kirigami.Units.gridUnit
+            anchors.bottomMargin: Kirigami.Units.gridUnit
             spacing: Kirigami.Units.smallSpacing
 
             // ── Header ───────────────────────────────────────────────────────
             RowLayout {
                 Layout.fillWidth: true
-                spacing: 6
+                spacing: Kirigami.Units.smallSpacing
 
                 Rectangle {
                     color: root.loaded ? themeAdapter.green : themeAdapter.subText
@@ -161,8 +166,9 @@ PlasmoidItem {
                     color: themeAdapter.text
                     font.pixelSize: Kirigami.Theme.defaultFont.pixelSize
                     font.weight: Font.Medium
-                    font.family: (Kirigami.Theme.fixedWidthFont && Kirigami.Theme.fixedWidthFont.family) ? Kirigami.Theme.fixedWidthFont.family : "monospace"
+                    font.family: themeAdapter.monoFamily
                     Layout.fillWidth: true
+                    horizontalAlignment: Text.AlignHCenter
                     text: i18n("Claude AI Usage")
                 }
 
@@ -176,7 +182,7 @@ PlasmoidItem {
             RowLayout {
                 Layout.fillWidth:  true
                 Layout.fillHeight: true
-                spacing: 12
+                spacing: Kirigami.Units.gridUnit
 
                 RingGauge {
                     accent: root.colorFor(root.usage5h)
@@ -192,7 +198,7 @@ PlasmoidItem {
                 }
 
                 Rectangle {
-                    color: Kirigami.Theme.separatorColor
+                    color: themeAdapter.separator
                     Layout.fillHeight: true
                     width: 1
                 }
@@ -213,9 +219,9 @@ PlasmoidItem {
 
             // ── Error / status strip ─────────────────────────────────────────
             PlasmaComponents3.Label {
-                color: themeAdapter.orange
+                color: themeAdapter.error
                 font.pixelSize: Kirigami.Theme.smallFont.pixelSize
-                font.family: (Kirigami.Theme.fixedWidthFont && Kirigami.Theme.fixedWidthFont.family) ? Kirigami.Theme.fixedWidthFont.family : "monospace"
+                font.family: themeAdapter.monoFamily
                 Layout.fillWidth: true
                 text: {
                     switch (root.errorMsg) {
@@ -223,6 +229,7 @@ PlasmoidItem {
                         case "no network": return i18n("⚠  No network connection")
                         case "timeout":    return i18n("⚠  Request timed out")
                         case "auth_error": return i18n("⚠  Token invalid or expired — re-login to Claude Code")
+                        case "rate_limit": return i18n("⚠  Rate limit — next retry in %1m", root._rateLimitRetry)
                         default:           return i18n("⚠  %1", root.errorMsg)
                     }
                 }
@@ -241,9 +248,9 @@ PlasmoidItem {
         PlasmaComponents3.Label {
             anchors.centerIn: parent
             color: root.loaded ? root.colorFor(root.usage5h) : themeAdapter.subText
-            font.pixelSize: 11
+            font.pixelSize: Kirigami.Theme.smallFont.pixelSize
             font.weight: Font.Bold
-            font.family: (Kirigami.Theme.fixedWidthFont && Kirigami.Theme.fixedWidthFont.family) ? Kirigami.Theme.fixedWidthFont.family : "monospace"
+            font.family: themeAdapter.monoFamily
             text: root.loaded ? Math.round(root.usage5h * 100) + "%" : "…"
         }
     }

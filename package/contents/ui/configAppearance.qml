@@ -25,7 +25,7 @@ Kirigami.FormLayout {
             }
             return 0;
         }
-        onActivated: (index) => { cfg_colorTheme = model[index].value; }
+        onActivated: function(index) { cfg_colorTheme = model[index].value }
     }
 
     PlasmaComponents3.Label {
