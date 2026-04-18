@@ -1,5 +1,5 @@
 {
-  "name": "claude-usage-plasmoid",
+  "name": "plasma-applet-claude-usage",
   "version": "1.0.0",
   "description": "A KDE Plasma 6 plasmoid that displays your Claude AI usage as animated circular progress rings for the **session** (5-hour) and **weekly** (7-day) rate-limit windows.",
   "main": "index.js",
@@ -11,16 +11,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/codexis/claude-usage-plasmoid.git"
+    "url": "git+https://github.com/codexis/plasma-applet-claude-usage.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/codexis/claude-usage-plasmoid/issues"
+    "url": "https://github.com/codexis/plasma-applet-claude-usage/issues"
   },
-  "homepage": "https://github.com/codexis/claude-usage-plasmoid#readme",
+  "homepage": "https://github.com/codexis/plasma-applet-claude-usage#readme",
   "devDependencies": {
     "jest": "^30.3.0"
   }

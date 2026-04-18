@@ -27,6 +27,17 @@ CONFIG_FILE = Path.home() / ".config" / "claude-usage-widget" / "config.json"
 ANTHROPIC_BETA = "oauth-2025-04-20"
 
 
+def _find_project_root() -> Path | None:
+    for parent in Path(__file__).resolve().parents:
+        if (parent / ".git").exists():
+            return parent
+    return None
+
+
+_root = _find_project_root()
+MOCK_RESPONSE = (_root / "dev" / "mock" / "response.json") if _root else None
+
+
 def load_token():
     if CREDENTIALS_FILE.exists():
         try:
@@ -36,6 +47,7 @@ def load_token():
                 return token.strip()
         except Exception as e:
             logging.debug("Could not read credentials file: %s", e)
+
     if CONFIG_FILE.exists():
         try:
             data = json.loads(CONFIG_FILE.read_text())
@@ -44,6 +56,7 @@ def load_token():
                 return token.strip()
         except Exception as e:
             logging.debug("Could not read config file: %s", e)
+
     return None
 
 
@@ -61,6 +74,16 @@ def fetch_usage(token):
 
 
 def main():
+    if MOCK_RESPONSE and MOCK_RESPONSE.exists():
+        try:
+            text = MOCK_RESPONSE.read_text()
+            json.loads(text)  # validate
+            logging.debug("Using mock response, skipping API call")
+            print(text)
+            return
+        except (json.JSONDecodeError, OSError) as e:
+            logging.warning("Mock response invalid, falling back to API: %s", e)
+
     token = load_token()
     if not token:
         print(json.dumps({"error": "no_token"}))

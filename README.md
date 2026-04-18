@@ -31,8 +31,8 @@ A KDE Plasma 6 plasmoid that displays your Claude AI usage as animated circular 
 ## Installation
 
 ```bash
-git clone https://github.com/codexis/claude-usage-plasmoid
-cd claude-usage-plasmoid
+git clone https://github.com/codexis/plasma-applet-claude-usage
+cd plasma-applet-claude-usage
 bash install.sh
 ```
 
@@ -81,18 +81,6 @@ cat > ~/.config/claude-usage-widget/config.json << 'EOF'
 EOF
 chmod 600 ~/.config/claude-usage-widget
 ```
-
-## Testing
-
-The project includes three test suites that run automatically in CI on every push and pull request to `main`.
-
-| Suite | Runner | Command |
-|-------|--------|---------|
-| JavaScript | Jest | `npm install && npm test` |
-| Python | unittest | `python3 -m unittest discover tests/python` |
-| QML | QtTest | `qmltestrunner tests/qml/tst_timeUtils.qml` |
-
-QML tests require `qt6-declarative-dev` (or equivalent) with `qmltestrunner` available.
 
 ## Uninstalling
 
