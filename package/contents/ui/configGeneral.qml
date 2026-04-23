@@ -4,57 +4,54 @@ import QtQuick.Controls as QQC2
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.components 3.0 as PlasmaComponents3
 
-Kirigami.FormLayout {
+ColumnLayout {
     id: page
+    spacing: Kirigami.Units.smallSpacing * 2
 
-    // Plasma automatically reads/writes Plasmoid.configuration.session5hResetMode.
-    // No initializer — property starts as "" so Plasma's load always triggers a
-    // change signal, allowing Apply/OK change-detection to work from first open.
     property string cfg_session5hResetMode
     property string cfg_session1wResetMode
+    property string cfg_extraUsageDisplay
+    property bool   cfg_showRing5h
+    property bool   cfg_showRing7d
+    property bool   cfg_showRingExtra
 
-    QQC2.ButtonGroup { id: group5h }
-    QQC2.ButtonGroup { id: group1w }
-
-    ColumnLayout {
-        Kirigami.FormData.label: i18n("Session (5h) — reset time format:")
-        spacing: Kirigami.Units.smallSpacing
-
-        PlasmaComponents3.RadioButton {
-            QQC2.ButtonGroup.group: group5h
-            text: i18n("Remaining time (e.g. \"1h 23m\")")
-            checked: cfg_session5hResetMode === "timeLeft"
-            onClicked: cfg_session5hResetMode = "timeLeft"
-        }
-
-        PlasmaComponents3.RadioButton {
-            QQC2.ButtonGroup.group: group5h
-            text: i18n("Exact reset time (e.g. \"14:30\")")
-            checked: cfg_session5hResetMode === "exactTime"
-            onClicked: cfg_session5hResetMode = "exactTime"
-        }
+    RingConfigSection {
+        title: i18n("Session limit")
+        Layout.topMargin: 0
+        showEnabled: cfg_showRing5h
+        mode: cfg_session5hResetMode
+        subHeading: i18n("Show reset as")
+        options: [
+            { value: "timeLeft",  label: i18n("Remaining time"),   example: i18n("e.g. 1h 23m") },
+            { value: "exactTime", label: i18n("Exact reset time"),  example: i18n("e.g. 14:30")  }
+        ]
+        onShowToggled: (val) => cfg_showRing5h = val
+        onModeSelected: (val) => cfg_session5hResetMode = val
     }
 
-    Kirigami.Separator {
-        Layout.fillWidth: true
+    RingConfigSection {
+        title: i18n("Weekly limit")
+        showEnabled: cfg_showRing7d
+        mode: cfg_session1wResetMode
+        subHeading: i18n("Show reset as")
+        options: [
+            { value: "timeLeft",  label: i18n("Remaining time"),   example: i18n("e.g. 3d / 12h 30m") },
+            { value: "exactDate", label: i18n("Exact reset date"),  example: i18n("e.g. Apr 15")        }
+        ]
+        onShowToggled: (val) => cfg_showRing7d = val
+        onModeSelected: (val) => cfg_session1wResetMode = val
     }
 
-    ColumnLayout {
-        Kirigami.FormData.label: i18n("Weekly (7d) — reset time format:")
-        spacing: Kirigami.Units.smallSpacing
-
-        PlasmaComponents3.RadioButton {
-            QQC2.ButtonGroup.group: group1w
-            text: i18n("Remaining time (e.g. \"3d\" or \"12h 30m\")")
-            checked: cfg_session1wResetMode === "timeLeft"
-            onClicked: cfg_session1wResetMode = "timeLeft"
-        }
-
-        PlasmaComponents3.RadioButton {
-            QQC2.ButtonGroup.group: group1w
-            text: i18n("Exact reset date (e.g. \"Apr 15\")")
-            checked: cfg_session1wResetMode === "exactDate"
-            onClicked: cfg_session1wResetMode = "exactDate"
-        }
+    RingConfigSection {
+        title: i18n("Extra usage")
+        showEnabled: cfg_showRingExtra
+        mode: cfg_extraUsageDisplay
+        subHeading: i18n("Display format")
+        options: [
+            { value: "spent",     label: i18n("Amount spent"),     example: i18n("e.g. €42.77 / €150") },
+            { value: "remaining", label: i18n("Amount remaining"),  example: i18n("e.g. €107 / €150")  }
+        ]
+        onShowToggled: (val) => cfg_showRingExtra = val
+        onModeSelected: (val) => cfg_extraUsageDisplay = val
     }
 }
