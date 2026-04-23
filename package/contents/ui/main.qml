@@ -88,8 +88,8 @@ PlasmoidItem {
         if (!root.extraPresent) return ""
         const amount = _extraAmount()
         if (amount >= 100) return ""
-        const str = amount.toFixed(2)
-        return str.substring(str.indexOf("."))
+        const cents = Math.round((amount % 1) * 100)
+        return "." + String(cents).padStart(2, "0")
     }
 
     function computeExtraLimitText() {
