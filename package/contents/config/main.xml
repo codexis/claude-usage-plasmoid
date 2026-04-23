@@ -26,5 +26,8 @@
         <entry name="customRed" type="String">
             <default>#e40000</default>
         </entry>
+        <entry name="extraUsageDisplay" type="String">
+            <default>spent</default>
+        </entry>
     </group>
 </kcfg>

@@ -53,8 +53,9 @@ tests/
 
 1. `main.qml` spawns `fetch_usage.py` via `PlasmaCore.DataSource` (engine: `"executable"`).
 2. The Python script calls `https://api.anthropic.com/api/oauth/usage`, reads the OAuth token from `~/.claude/.credentials.json` (Claude Code) or `~/.config/claude-usage-widget/config.json` (manual).
-3. On success it prints a JSON object; `main.qml` parses `five_hour` and `seven_day` fields.
-4. `main.qml` holds all state (`usage5h`, `usage7d`, `reset5h`, `reset7d`) and passes computed props down to two `RingGauge` instances.
+3. On success it prints a JSON object; `main.qml` parses `five_hour`, `seven_day`, and `extra_usage` fields.
+4. `main.qml` holds all state (`usage5h`, `usage7d`, `reset5h`, `reset7d`, `usageExtra`, `extraLimit`, `extraUsed`, `extraCurrency`, `extraPresent`, `extraEnabled`) and passes computed props down to `RingGauge` instances.
+   - `extra_usage` is a monthly credits bucket: `monthly_limit` and `used_credits` are in centi-currency (÷100 to get real amount, e.g. `1700` → €17.00). Ring is hidden when `extra_usage === null`; shown gray when `is_enabled === false`.
 5. A `pollTimer` re-fetches every 5 minutes (doubles on HTTP 429, capped at 30 min). A second 1-minute timer increments `_tick` to force reactive re-evaluation of time-remaining labels without a full fetch.
 
 ### Configuration

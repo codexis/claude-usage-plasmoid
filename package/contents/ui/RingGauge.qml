@@ -18,14 +18,15 @@ import org.kde.plasma.components 3.0 as PlasmaComponents3
 Item {
     id: gauge
 
-    property real   value:     0.0
-    property string label:     ""
-    property color  accent:    "#38bdf8"
-    property color  ringBg:    "#1e2535"
-    property string resetIn:   "–"
-    property bool   errMode:   false
-    property color  subColor:  "#64748b"
-    property color  textColor: "#e2e8f0"
+    property real   value:         0.0
+    property string label:         ""
+    property color  accent:        "#38bdf8"
+    property color  ringBg:        "#1e2535"
+    property string resetIn:       "–"
+    property bool   errMode:       false
+    property color  subColor:      "#64748b"
+    property color  textColor:     "#e2e8f0"
+    property string centerOverride: ""   // when set, replaces the percentage in the center
 
     // smooth value animation
     property real animValue: 0.0
@@ -121,7 +122,7 @@ Item {
 
                 PlasmaComponents3.Label {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: gauge.errMode ? "–" : Math.round(gauge.animValue * 100) + "%"
+                    text: gauge.errMode ? "–" : (gauge.centerOverride !== "" ? gauge.centerOverride : Math.round(gauge.animValue * 100) + "%")
                     color: gauge.errMode ? gauge.subColor : gauge.textColor
                     font.pixelSize: Math.max(
                         Math.min(canvas.width, canvas.height) * 0.22,

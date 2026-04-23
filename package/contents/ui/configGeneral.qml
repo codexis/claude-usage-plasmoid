@@ -12,9 +12,11 @@ Kirigami.FormLayout {
     // change signal, allowing Apply/OK change-detection to work from first open.
     property string cfg_session5hResetMode
     property string cfg_session1wResetMode
+    property string cfg_extraUsageDisplay
 
     QQC2.ButtonGroup { id: group5h }
     QQC2.ButtonGroup { id: group1w }
+    QQC2.ButtonGroup { id: groupExtra }
 
     ColumnLayout {
         Kirigami.FormData.label: i18n("Session (5h) — reset time format:")
@@ -55,6 +57,29 @@ Kirigami.FormLayout {
             text: i18n("Exact reset date (e.g. \"Apr 15\")")
             checked: cfg_session1wResetMode === "exactDate"
             onClicked: cfg_session1wResetMode = "exactDate"
+        }
+    }
+
+    Kirigami.Separator {
+        Layout.fillWidth: true
+    }
+
+    ColumnLayout {
+        Kirigami.FormData.label: i18n("Extra usage — display format:")
+        spacing: Kirigami.Units.smallSpacing
+
+        PlasmaComponents3.RadioButton {
+            QQC2.ButtonGroup.group: groupExtra
+            text: i18n("Amount spent (e.g. \"€2.77 / €17\")")
+            checked: cfg_extraUsageDisplay === "spent"
+            onClicked: cfg_extraUsageDisplay = "spent"
+        }
+
+        PlasmaComponents3.RadioButton {
+            QQC2.ButtonGroup.group: groupExtra
+            text: i18n("Amount remaining (e.g. \"€14.23 / €17\")")
+            checked: cfg_extraUsageDisplay === "remaining"
+            onClicked: cfg_extraUsageDisplay = "remaining"
         }
     }
 }

@@ -15,14 +15,21 @@ PlasmoidItem {
 
     toolTipMainText: i18n("Claude AI Usage")
     toolTipSubText: root.loaded
-        ? i18n("Session: %1% · Weekly: %2%", Math.round(root.usage5h * 100), Math.round(root.usage7d * 100))
+        ? (root.extraPresent
+            ? i18n("Session: %1% · Weekly: %2% · Extra usage: %3%",
+                   Math.round(root.usage5h * 100),
+                   Math.round(root.usage7d * 100),
+                   Math.round(root.usageExtra * 100))
+            : i18n("Session: %1% · Weekly: %2%",
+                   Math.round(root.usage5h * 100),
+                   Math.round(root.usage7d * 100)))
         : (root.errorMsg || i18n("Loading…"))
 
     // ── Size ────────────────────────────────────────────────────────────────
     preferredRepresentation: fullRepresentation
-    Layout.minimumWidth: 400
+    Layout.minimumWidth: 580
     Layout.minimumHeight: 220
-    Layout.preferredWidth: 500
+    Layout.preferredWidth: 720
     Layout.preferredHeight: 300
 
     // ── State ────────────────────────────────────────────────────────────────
@@ -32,6 +39,13 @@ PlasmoidItem {
     property string reset7d: ""
     property string errorMsg: ""
     property bool   loaded:   false
+
+    property bool   extraPresent:  false
+    property bool   extraEnabled:  false
+    property real   usageExtra:    0.0
+    property real   extraLimit:    0.0
+    property real   extraUsed:     0.0
+    property string extraCurrency: ""
 
     readonly property int kPollBase:     300000   // 5 min
     readonly property int kPollMax:     1800000   // 30 min
@@ -44,6 +58,25 @@ PlasmoidItem {
 
     ThemeAdapter {
         id: themeAdapter
+    }
+
+    function currencySymbol(code) {
+        if (code === "EUR") return "€"
+        if (code === "USD") return "$"
+        return code
+    }
+
+    function computeExtraCenterText() {
+        if (!root.extraPresent) return ""
+        const sym = currencySymbol(root.extraCurrency)
+        if (plasmoid.configuration.extraUsageDisplay === "remaining")
+            return sym + (root.extraLimit - root.extraUsed).toFixed(2)
+        return sym + root.extraUsed.toFixed(2)
+    }
+
+    function computeExtraLimitText() {
+        if (!root.extraPresent) return ""
+        return "/ " + currencySymbol(root.extraCurrency) + root.extraLimit.toFixed(0)
     }
 
     function colorFor(pct) {
@@ -99,6 +132,17 @@ PlasmoidItem {
                     root.usage7d  = u7 / 100
                     root.reset5h  = obj.five_hour ? obj.five_hour.resets_at : ""
                     root.reset7d  = obj.seven_day ? obj.seven_day.resets_at : ""
+                    const ex = obj.extra_usage
+                    if (ex !== null && ex !== undefined) {
+                        root.extraPresent  = true
+                        root.extraEnabled  = ex.is_enabled === true
+                        root.usageExtra    = (ex.utilization   || 0) / 100
+                        root.extraLimit    = (ex.monthly_limit || 0) / 100
+                        root.extraUsed     = (ex.used_credits  || 0) / 100
+                        root.extraCurrency = ex.currency || ""
+                    } else {
+                        root.extraPresent = false
+                    }
                     root.errorMsg     = ""
                     root.loaded       = true
                     root._pollInterval = root.kPollBase
@@ -217,6 +261,28 @@ PlasmoidItem {
                     subColor:  themeAdapter.subText
                     textColor: themeAdapter.text
                     value:     root.usage7d
+                }
+
+                Rectangle {
+                    color: themeAdapter.separator
+                    Layout.fillHeight: true
+                    width: 1
+                    visible: root.extraPresent
+                }
+
+                RingGauge {
+                    accent:         root.extraEnabled ? root.colorFor(root.usageExtra) : themeAdapter.subText
+                    centerOverride: root.computeExtraCenterText()
+                    errMode:        !root.loaded
+                    label:          i18n("Extra")
+                    Layout.fillHeight: true
+                    Layout.fillWidth:  true
+                    resetIn:        root.computeExtraLimitText()
+                    ringBg:         themeAdapter.ring
+                    subColor:       themeAdapter.subText
+                    textColor:      themeAdapter.text
+                    value:          root.usageExtra
+                    visible:        root.extraPresent
                 }
             }
 
