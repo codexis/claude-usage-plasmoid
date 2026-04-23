@@ -86,7 +86,9 @@ PlasmoidItem {
 
     function computeExtraCenterSubText() {
         if (!root.extraPresent) return ""
-        const str = _extraAmount().toFixed(2)
+        const amount = _extraAmount()
+        if (amount >= 100) return ""
+        const str = amount.toFixed(2)
         return str.substring(str.indexOf("."))
     }
 
@@ -259,12 +261,14 @@ PlasmoidItem {
                     subColor: themeAdapter.subText
                     textColor: themeAdapter.text
                     value:    root.usage5h
+                    visible:  plasmoid.configuration.showRing5h
                 }
 
                 Rectangle {
                     color: themeAdapter.separator
                     Layout.fillHeight: true
                     width: 1
+                    visible: plasmoid.configuration.showRing5h && plasmoid.configuration.showRing7d
                 }
 
                 RingGauge {
@@ -278,13 +282,15 @@ PlasmoidItem {
                     subColor:  themeAdapter.subText
                     textColor: themeAdapter.text
                     value:     root.usage7d
+                    visible:   plasmoid.configuration.showRing7d
                 }
 
                 Rectangle {
                     color: themeAdapter.separator
                     Layout.fillHeight: true
                     width: 1
-                    visible: root.extraPresent
+                    visible: (plasmoid.configuration.showRing5h || plasmoid.configuration.showRing7d)
+                             && root.extraPresent && plasmoid.configuration.showRingExtra
                 }
 
                 RingGauge {
@@ -300,7 +306,7 @@ PlasmoidItem {
                     subColor:       themeAdapter.subText
                     textColor:      themeAdapter.text
                     value:          root.usageExtra
-                    visible:        root.extraPresent
+                    visible:        root.extraPresent && plasmoid.configuration.showRingExtra
                 }
             }
 

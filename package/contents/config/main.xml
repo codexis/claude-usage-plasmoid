@@ -5,6 +5,15 @@
                           http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
     <kcfgfile name=""/>
     <group name="General">
+        <entry name="showRing5h" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="showRing7d" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="showRingExtra" type="Bool">
+            <default>true</default>
+        </entry>
         <entry name="session5hResetMode" type="String">
             <default>exactTime</default>
         </entry>
