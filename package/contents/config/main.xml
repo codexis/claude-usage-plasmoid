@@ -12,7 +12,7 @@
             <default>true</default>
         </entry>
         <entry name="showRingExtra" type="Bool">
-            <default>true</default>
+            <default>false</default>
         </entry>
         <entry name="session5hResetMode" type="String">
             <default>exactTime</default>

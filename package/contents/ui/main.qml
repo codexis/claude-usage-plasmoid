@@ -78,18 +78,22 @@ PlasmoidItem {
             : root.extraUsed
     }
 
+    function _formattedExtraAmountParts() {
+        const [intPart, fracPart = "00"] = _extraAmount().toFixed(2).split(".")
+        return { intPart, fracPart }
+    }
+
     function computeExtraCenterText() {
         if (!root.extraPresent) return ""
-        const str = _extraAmount().toFixed(2)
-        return currencySymbol(root.extraCurrency) + str.substring(0, str.indexOf("."))
+        const { intPart } = _formattedExtraAmountParts()
+        return currencySymbol(root.extraCurrency) + intPart
     }
 
     function computeExtraCenterSubText() {
         if (!root.extraPresent) return ""
-        const amount = _extraAmount()
-        if (amount >= 100) return ""
-        const cents = Math.round((amount % 1) * 100)
-        return "." + String(cents).padStart(2, "0")
+        const { intPart, fracPart } = _formattedExtraAmountParts()
+        if (Math.abs(parseInt(intPart, 10)) >= 100) return ""
+        return "." + fracPart
     }
 
     function computeExtraLimitText() {
