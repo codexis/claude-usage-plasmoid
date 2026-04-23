@@ -95,8 +95,8 @@ PlasmoidItem {
                 } else {
                     const u5 = obj.five_hour ? (obj.five_hour.utilization !== undefined ? obj.five_hour.utilization : 0) : 0
                     const u7 = obj.seven_day ? (obj.seven_day.utilization !== undefined ? obj.seven_day.utilization : 0) : 0
-                    root.usage5h  = u5 > 1 ? u5 / 100 : u5
-                    root.usage7d  = u7 > 1 ? u7 / 100 : u7
+                    root.usage5h  = u5 / 100
+                    root.usage7d  = u7 / 100
                     root.reset5h  = obj.five_hour ? obj.five_hour.resets_at : ""
                     root.reset7d  = obj.seven_day ? obj.seven_day.resets_at : ""
                     root.errorMsg     = ""

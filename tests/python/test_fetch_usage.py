@@ -171,7 +171,8 @@ class TestMain(unittest.TestCase):
         mock_load.return_value = "token"
         mock_fetch.side_effect = ValueError("something went wrong")
 
-        fetch_usage.main()
+        with self.assertLogs(level='ERROR'):
+            fetch_usage.main()
         call_arg = json.loads(mock_print.call_args[0][0])
         self.assertIn("unexpected:", call_arg["error"])
         self.assertIn("ValueError", call_arg["error"])
