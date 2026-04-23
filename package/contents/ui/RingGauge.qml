@@ -26,7 +26,8 @@ Item {
     property bool   errMode:       false
     property color  subColor:      "#64748b"
     property color  textColor:     "#e2e8f0"
-    property string centerOverride: ""   // when set, replaces the percentage in the center
+    property string centerOverride:    ""   // when set, replaces the percentage in the center
+    property string centerOverrideSub: ""   // fractional part — rendered smaller + dimmer beside centerOverride
 
     // smooth value animation
     property real animValue: 0.0
@@ -120,18 +121,41 @@ Item {
                 anchors.centerIn: parent
                 spacing: 0
 
-                PlasmaComponents3.Label {
+                Item {
                     anchors.horizontalCenter: parent.horizontalCenter
-                    text: gauge.errMode ? "–" : (gauge.centerOverride !== "" ? gauge.centerOverride : Math.round(gauge.animValue * 100) + "%")
-                    color: gauge.errMode ? gauge.subColor : gauge.textColor
-                    font.pixelSize: Math.max(
-                        Math.min(canvas.width, canvas.height) * 0.22,
-                        Kirigami.Theme.defaultFont.pixelSize
-                    )
-                    font.weight: Font.Bold
-                    font.family: gauge.monoFamily
+                    implicitWidth:  mainLabel.implicitWidth + (subLabel.visible ? subLabel.implicitWidth : 0)
+                    implicitHeight: mainLabel.implicitHeight
 
-                    Behavior on color { ColorAnimation { duration: 800 } }
+                    PlasmaComponents3.Label {
+                        id: mainLabel
+                        anchors.left: parent.left
+                        text: gauge.errMode ? "–" : (gauge.centerOverride !== "" ? gauge.centerOverride : Math.round(gauge.animValue * 100) + "%")
+                        color: gauge.errMode ? gauge.subColor : gauge.textColor
+                        font.pixelSize: Math.max(
+                            Math.min(canvas.width, canvas.height) * 0.22,
+                            Kirigami.Theme.defaultFont.pixelSize
+                        )
+                        font.weight: Font.Bold
+                        font.family: gauge.monoFamily
+
+                        Behavior on color { ColorAnimation { duration: 800 } }
+                    }
+
+                    PlasmaComponents3.Label {
+                        id: subLabel
+                        anchors.left:     mainLabel.right
+                        anchors.baseline: mainLabel.baseline
+                        visible: !gauge.errMode && gauge.centerOverrideSub !== ""
+                        text: visible ? gauge.centerOverrideSub : ""
+                        color: gauge.subColor
+                        font.pixelSize: Math.max(
+                            Math.min(canvas.width, canvas.height) * 0.13,
+                            Kirigami.Theme.smallFont.pixelSize
+                        )
+                        font.weight: Font.Normal
+                        font.family: gauge.monoFamily
+                        opacity: 0.9
+                    }
                 }
 
                 PlasmaComponents3.Label {

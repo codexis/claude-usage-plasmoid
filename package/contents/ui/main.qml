@@ -56,6 +56,12 @@ PlasmoidItem {
     property bool _fetching: false       // guard against concurrent fetches
     property int  _rateLimitRetry: 0     // minutes until next retry after 429
 
+    readonly property var usageColorThresholds: ({
+        green: 0.5,
+        yellow: 0.75,
+        orange: 0.9
+    })
+
     ThemeAdapter {
         id: themeAdapter
     }
@@ -66,12 +72,22 @@ PlasmoidItem {
         return code
     }
 
+    function _extraAmount() {
+        return plasmoid.configuration.extraUsageDisplay === "remaining"
+            ? (root.extraLimit - root.extraUsed)
+            : root.extraUsed
+    }
+
     function computeExtraCenterText() {
         if (!root.extraPresent) return ""
-        const sym = currencySymbol(root.extraCurrency)
-        if (plasmoid.configuration.extraUsageDisplay === "remaining")
-            return sym + (root.extraLimit - root.extraUsed).toFixed(2)
-        return sym + root.extraUsed.toFixed(2)
+        const str = _extraAmount().toFixed(2)
+        return currencySymbol(root.extraCurrency) + str.substring(0, str.indexOf("."))
+    }
+
+    function computeExtraCenterSubText() {
+        if (!root.extraPresent) return ""
+        const str = _extraAmount().toFixed(2)
+        return str.substring(str.indexOf("."))
     }
 
     function computeExtraLimitText() {
@@ -80,9 +96,10 @@ PlasmoidItem {
     }
 
     function colorFor(pct) {
-        if (pct < 0.5)  return themeAdapter.green
-        if (pct < 0.75) return themeAdapter.yellow
-        if (pct < 0.9)  return themeAdapter.orange
+        const thresholds = usageColorThresholds
+        if (pct < thresholds.green) return themeAdapter.green
+        if (pct < thresholds.yellow) return themeAdapter.yellow
+        if (pct < thresholds.orange) return themeAdapter.orange
         return themeAdapter.red
     }
 
@@ -271,9 +288,10 @@ PlasmoidItem {
                 }
 
                 RingGauge {
-                    accent:         root.extraEnabled ? root.colorFor(root.usageExtra) : themeAdapter.subText
-                    centerOverride: root.computeExtraCenterText()
-                    errMode:        !root.loaded
+                    accent:            root.extraEnabled ? root.colorFor(root.usageExtra) : themeAdapter.subText
+                    centerOverride:    root.computeExtraCenterText()
+                    centerOverrideSub: root.computeExtraCenterSubText()
+                    errMode:           !root.loaded
                     label:          i18n("Extra")
                     Layout.fillHeight: true
                     Layout.fillWidth:  true
