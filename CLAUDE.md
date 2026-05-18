@@ -53,7 +53,7 @@ tests/
 ### Data flow
 
 1. `main.qml` spawns `fetch_usage.py` via `PlasmaCore.DataSource` (engine: `"executable"`).
-2. The Python script calls `https://api.anthropic.com/api/oauth/usage`, reads the OAuth token from `~/.claude/.credentials.json` (Claude Code) or `~/.config/claude-usage-widget/config.json` (manual).
+2. The Python script calls `https://api.anthropic.com/api/oauth/usage`. Token lookup order: `~/.claude/.credentials.json` `claudeAiOauth.accessToken` field (Claude Code, read directly, no refresh) → `~/.config/claude-usage-widget/config.json` `oauth_token` field (manual).
 3. On success it prints a JSON object; `main.qml` parses `five_hour`, `seven_day`, `seven_day_omelette`, and `extra_usage` fields. Example response shape:
 
 ```json

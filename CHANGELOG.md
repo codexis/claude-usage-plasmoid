@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.0-alpha.3] - 2026-05-18
+### Added
+- **Claude Design ring** — fourth ring tracking the `seven_day_omelette` weekly usage window; independently toggleable from Settings → General with the same remaining-time / exact-date display options as the weekly ring; defaults to hidden
+
+### Changed
+- **Time remaining format** — unified across all rings: `Xd Yh` (days + hours), `Xh Ym` (hours + minutes), or `X min` (minutes only). Previously the weekly/omelette rings showed days without hours (e.g. `3d`), and minutes used a shorter `Xm` suffix.
+
+---
+
 ## [1.0.0-alpha.2] - 2026-04-23
 ### Added
 - **Extra usage ring** — third ring tracking spending against a user-defined monthly budget for Claude usage beyond the subscription plan; automatically hidden when extra usage is not configured, grayed out when disabled

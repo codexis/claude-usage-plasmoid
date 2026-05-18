@@ -61,15 +61,9 @@ The old installation is removed and replaced cleanly on every run.
 
 ## Authentication
 
-The widget reads your Claude OAuth token automatically — no manual setup needed if you use **Claude Code CLI**.
-
 ### Automatic (Claude Code)
 
-If Claude Code is installed, the token is read from:
-
-```
-~/.claude/.credentials.json
-```
+If Claude Code is installed, the widget reads the access token directly from `~/.claude/.credentials.json` — no setup needed. When the token expires, run `claude` to trigger a re-login and the credentials file will be updated automatically.
 
 ### Manual token
 
@@ -82,7 +76,7 @@ cat > ~/.config/claude-usage-widget/config.json << 'EOF'
   "oauth_token": "YOUR_TOKEN_HERE"
 }
 EOF
-chmod 600 ~/.config/claude-usage-widget
+chmod 600 ~/.config/claude-usage-widget/config.json
 ```
 
 ## Uninstalling

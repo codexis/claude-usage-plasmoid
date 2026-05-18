@@ -42,18 +42,18 @@ def load_token():
     if CREDENTIALS_FILE.exists():
         try:
             data = json.loads(CREDENTIALS_FILE.read_text())
-            token = data.get("claudeAiOauth", {}).get("accessToken")
-            if token and token.strip():
-                return token.strip()
+            token = data.get("claudeAiOauth", {}).get("accessToken", "").strip()
+            if token:
+                return token
         except Exception as e:
             logging.debug("Could not read credentials file: %s", e)
 
     if CONFIG_FILE.exists():
         try:
             data = json.loads(CONFIG_FILE.read_text())
-            token = data.get("oauth_token")
-            if token and token.strip():
-                return token.strip()
+            token = data.get("oauth_token", "").strip()
+            if token:
+                return token
         except Exception as e:
             logging.debug("Could not read config file: %s", e)
 
