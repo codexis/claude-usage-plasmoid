@@ -39,8 +39,9 @@ package/
     ui/
       main.qml             — root PlasmoidItem; all state, timers, data parsing live here
       RingGauge.qml        — reusable Canvas-based animated ring component
+      RingConfigSection.qml — reusable settings section: show/hide toggle + display-format radio buttons for one ring
       ThemeAdapter.qml     — resolves colors for Custom Colors vs Follow System Theme; text/subText/error always system, arc colors from plasmoid.configuration in custom mode
-      configGeneral.qml    — settings dialog: General tab (reset mode)
+      configGeneral.qml    — settings dialog: General tab; per-ring show/hide + display format (reset mode for session/weekly, spent vs remaining for extra)
       configAppearance.qml — settings dialog: Appearance tab (theme selector + color pickers for Custom mode)
   metadata.json            — package identity, ID, version, author
 tests/
@@ -53,7 +54,28 @@ tests/
 
 1. `main.qml` spawns `fetch_usage.py` via `PlasmaCore.DataSource` (engine: `"executable"`).
 2. The Python script calls `https://api.anthropic.com/api/oauth/usage`, reads the OAuth token from `~/.claude/.credentials.json` (Claude Code) or `~/.config/claude-usage-widget/config.json` (manual).
-3. On success it prints a JSON object; `main.qml` parses `five_hour`, `seven_day`, and `extra_usage` fields.
+3. On success it prints a JSON object; `main.qml` parses `five_hour`, `seven_day`, and `extra_usage` fields. Example response shape:
+
+```json
+{
+    "five_hour":          { "utilization": 80.0, "resets_at": "2026-04-23T22:00:00+00:00" },
+    "seven_day":          { "utilization": 9.0,  "resets_at": "2026-04-23T22:00:00+00:00" },
+    "seven_day_oauth_apps": null,
+    "seven_day_opus":       null,
+    "seven_day_sonnet":     null,
+    "seven_day_cowork":     null,
+    "seven_day_omelette": { "utilization": 23.0, "resets_at": "2026-04-23T22:00:00+00:00" },
+    "iguana_necktie":       null,
+    "omelette_promotional": null,
+    "extra_usage": {
+        "is_enabled": true,
+        "monthly_limit": 1700,
+        "used_credits": 877.0,
+        "utilization": 51.59,
+        "currency": "EUR"
+    }
+}
+```
 4. `main.qml` holds all state (`usage5h`, `usage7d`, `reset5h`, `reset7d`, `usageExtra`, `extraLimit`, `extraUsed`, `extraCurrency`, `extraPresent`, `extraEnabled`) and passes computed props down to `RingGauge` instances.
    - `extra_usage` is a monthly credits bucket: `monthly_limit` and `used_credits` are in centi-currency (÷100 to get real amount, e.g. `1700` → €17.00). Ring is hidden when `extra_usage === null`; shown gray when `is_enabled === false`.
 5. A `pollTimer` re-fetches every 5 minutes (doubles on HTTP 429, capped at 30 min). A second 1-minute timer increments `_tick` to force reactive re-evaluation of time-remaining labels without a full fetch.
@@ -62,7 +84,10 @@ tests/
 
 - Settings are declared in `config/main.xml` and read in QML as `Plasmoid.configuration.<key>`.
 - `configGeneral.qml` exposes properties named `cfg_<key>` — Plasma syncs these automatically to/from the config store.
-- `session5hResetMode` (`"timeLeft"` | `"exactTime"`) controls the label shown below the session ring percentage.
+- `showRing5h` / `showRing7d` / `showRingExtra` (Bool) — per-ring visibility toggles; extra ring defaults to `false`.
+- `session5hResetMode` (`"timeLeft"` | `"exactTime"`) — label below the session ring.
+- `session1wResetMode` (`"timeLeft"` | `"exactDate"`) — label below the weekly ring.
+- `extraUsageDisplay` (`"spent"` | `"remaining"`) — label format for the extra usage ring.
 - `colorTheme` (`"plasma"` default | `"original"`) selects Follow System Theme vs Custom Colors.
 - `customGreen/Yellow/Orange/Red` — user-configurable arc colors for the Custom Colors theme (Low / Medium / High / Critical thresholds).
 - `ThemeAdapter.qml` exposes an `isCustom` boolean; text/subText/error/separator always come from `Kirigami.Theme` regardless of mode — only arc colors (`green/yellow/orange/red`) and backgrounds (`bg/ring`) switch.

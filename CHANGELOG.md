@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0-alpha.2] - 2026-04-23
+### Added
+- **Extra usage ring** — third ring tracking spending against a user-defined monthly budget for Claude usage beyond the subscription plan; automatically hidden when extra usage is not configured, grayed out when disabled
+  - Display format is configurable: **Amount spent** (e.g. `€8.77 / €17.00`) or **Amount remaining** (e.g. `€8.23 / €17.00`)
+- **Per-ring visibility** — each ring (session, weekly, extra) can be independently toggled in Settings → General; settings page redesigned with a reusable section component: each ring has its own show/hide toggle and display-format selector
+
+### Fixed
+- Adapted to the updated Anthropic API utilization response format
+- Corrected extra usage amount calculation (centi-currency division)
+
+---
+
 ## [1.0.0-alpha.1] - 2026-04-18
 ### Added
 - Two animated ring gauges showing Claude AI usage: 5-hour session and 7-day weekly window

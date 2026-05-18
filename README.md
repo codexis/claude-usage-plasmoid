@@ -1,23 +1,25 @@
 # Claude AI Usage — KDE Plasma Widget
 
-A KDE Plasma 6 plasmoid that displays your Claude AI usage as animated circular progress rings for the **session** (5-hour) and **weekly** (7-day) rate-limit windows.
+A KDE Plasma 6 plasmoid that displays your Claude AI usage as animated circular progress rings for the **session** (5-hour), **weekly** (7-day), and optional **extra usage** (monthly credits) windows.
 
 ```
-┌─────────────────────────────────┐
-│ • Claude AI Usage         ↻     │
-│                                 │
-│   ╭───────╮       ╭───────╮     │
-│   │  73%  │       │  41%  │     │
-│   │1h 33m │       │ Oct 7 │     │
-│   ╰───────╯       ╰───────╯     │
-│    session          weekly      │
-└─────────────────────────────────┘
+┌────────────────────────────────────────────┐
+│ • Claude AI Usage                      ↻   │
+│                                            │
+│  ╭───────╮      ╭───────╮      ╭───────╮   │
+│  │  73%  │      │  41%  │      │  €15  │   │
+│  │1h 33m │      │ Oct 7 │      │ / €70 │   │
+│  ╰───────╯      ╰───────╯      ╰───────╯   │
+│   session         weekly         extra     │
+└────────────────────────────────────────────┘
 ```
 
-- **Session ring** — usage % + time remaining/exact reset time
-- **Weekly ring** — usage % + refined remaining time (days or hours/mins) or exact reset date
+- **Session ring** — usage % + remaining time or exact reset time
+- **Weekly ring** — usage % + remaining time (days / h m) or exact reset date
+- **Extra usage ring** — monthly credits bucket: shows amount spent or remaining (e.g. `€8.77 / €17.00`); hidden when no extra plan, grayed out when disabled
+- **Per-ring visibility** — each ring can be independently shown or hidden from the General settings
 - **Dynamic colors** — green → yellow → orange → red based on utilization
-- **Customizable Appearance** — **Follow System Theme** (default, follows your Plasma Light/Dark theme) or **Custom Colors** with per-threshold color pickers; text colors always follow the system theme
+- **Customizable Appearance** — **Follow System Theme** (default) or **Custom Colors** with per-threshold color pickers; text colors always follow the system theme
 - **Automatic polling** — updates every **5 minutes** with automatic back-off on rate limits
 
 ## Requirements
