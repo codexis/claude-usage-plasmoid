@@ -13,20 +13,11 @@ function formatTimeLeft(iso, now) {
     const m = Math.floor(secs / 60)
     if (d > 0) return d + "d " + h + "h"
     if (h > 0) return h + "h " + m + "m"
-    return m > 0 ? m + "m" : "now"
+    return m > 0 ? m + " min" : "now"
 }
 
 function formatTimeLeftWeekly(iso, now) {
-    if (!iso) return "\u2013"
-    let secs = _parseSecs(iso, now)
-    if (secs <= 0) return "now"
-    const d = Math.floor(secs / 86400)
-    if (d >= 1) return d + "d"
-    let rem = secs % 86400
-    const h = Math.floor(rem / 3600); rem %= 3600
-    const m = Math.floor(rem / 60)
-    if (h > 0) return h + "h " + m + "m"
-    return m > 0 ? m + "m" : "now"
+    return formatTimeLeft(iso, now)
 }
 
 // locale: pass Qt.locale() from the calling QML file (not available in .pragma library)

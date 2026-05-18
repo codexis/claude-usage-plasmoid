@@ -43,7 +43,7 @@ describe('timeUtils.js', () => {
 
         test('formats minutes', () => {
             const future = new Date(mockNow.getTime() + 5 * 60 * 1000).toISOString();
-            expect(TimeUtils.formatTimeLeft(future)).toBe('5m');
+            expect(TimeUtils.formatTimeLeft(future)).toBe('5 min');
         });
 
         test('formats hours and minutes', () => {
@@ -67,9 +67,9 @@ describe('timeUtils.js', () => {
             expect(TimeUtils.formatTimeLeftWeekly(past)).toBe('now');
         });
 
-        test('formats days (days only if >= 1)', () => {
+        test('formats days and hours', () => {
             const future = new Date(mockNow.getTime() + (3 * 86400 + 5 * 3600) * 1000).toISOString();
-            expect(TimeUtils.formatTimeLeftWeekly(future)).toBe('3d');
+            expect(TimeUtils.formatTimeLeftWeekly(future)).toBe('3d 5h');
         });
 
         test('formats hours and minutes if less than a day', () => {
@@ -79,7 +79,7 @@ describe('timeUtils.js', () => {
 
         test('formats minutes if less than an hour', () => {
             const future = new Date(mockNow.getTime() + 45 * 60 * 1000).toISOString();
-            expect(TimeUtils.formatTimeLeftWeekly(future)).toBe('45m');
+            expect(TimeUtils.formatTimeLeftWeekly(future)).toBe('45 min');
         });
     });
 

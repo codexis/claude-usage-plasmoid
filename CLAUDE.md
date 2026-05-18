@@ -100,6 +100,14 @@ Drawn on a `Canvas` element. Key geometry properties: `startAngle` (–220°, to
 
 The `resetIn` string property is the only text the gauge displays below the percentage — formatting is entirely the caller's responsibility (`main.qml` switches between `formatTimeLeft` / `formatResetTime` / `formatResetDate`).
 
+### Time formatting (`timeUtils.js`)
+
+All time-remaining labels use `formatTimeLeft(iso, now)`. `formatTimeLeftWeekly` is an alias that delegates to the same function. Output format:
+- `> 1 day` → `Xd Yh` (e.g. `2d 3h`)
+- `< 1 day, > 1 hour` → `Xh Ym` (e.g. `1h 20m`)
+- `< 1 hour` → `X min` (e.g. `45 min`)
+- expired / null → `now` / `–`
+
 ## Testing
 
 The project has three test suites that run automatically in CI (GitHub Actions on every push/PR to `main`).

@@ -15,7 +15,7 @@ A KDE Plasma 6 plasmoid that displays your Claude AI usage as animated circular 
 ```
 
 - **Session ring** — usage % + remaining time or exact reset time
-- **Weekly ring** — usage % + remaining time (days / h m) or exact reset date
+- **Weekly ring** — usage % + remaining time (e.g. `3d 5h`, `12h 30m`, `45 min`) or exact reset date
 - **Claude Design ring** — separate weekly `seven_day_omelette` usage window; same display options as the weekly ring; hidden by default
 - **Extra usage ring** — monthly credits bucket: shows amount spent or remaining (e.g. `€8.77 / €17.00`); hidden when no extra plan, grayed out when disabled
 - **Per-ring visibility** — each ring can be independently shown or hidden from the General settings

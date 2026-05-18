@@ -24,7 +24,7 @@ TestCase {
 
     function test_formatTimeLeft_minutes() {
         var future = new Date(fixedNow.getTime() + 5 * 60 * 1000)
-        compare(TimeUtils.formatTimeLeft(future.toISOString(), fixedNow), "5m")
+        compare(TimeUtils.formatTimeLeft(future.toISOString(), fixedNow), "5 min")
     }
 
     function test_formatTimeLeft_hours_minutes() {
@@ -43,7 +43,7 @@ TestCase {
 
     function test_formatTimeLeftWeekly_days() {
         var future = new Date(fixedNow.getTime() + (3 * 86400 + 5 * 3600) * 1000)
-        compare(TimeUtils.formatTimeLeftWeekly(future.toISOString(), fixedNow), "3d")
+        compare(TimeUtils.formatTimeLeftWeekly(future.toISOString(), fixedNow), "3d 5h")
     }
 
     function test_formatTimeLeftWeekly_hours_minutes() {
