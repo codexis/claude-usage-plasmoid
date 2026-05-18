@@ -11,9 +11,11 @@ ColumnLayout {
     property string cfg_session5hResetMode
     property string cfg_session1wResetMode
     property string cfg_extraUsageDisplay
+    property string cfg_omelette7dResetMode
     property bool   cfg_showRing5h
     property bool   cfg_showRing7d
     property bool   cfg_showRingExtra
+    property bool   cfg_showRingOmelette
 
     RingConfigSection {
         title: i18n("Session limit")
@@ -40,6 +42,19 @@ ColumnLayout {
         ]
         onShowToggled: (val) => cfg_showRing7d = val
         onModeSelected: (val) => cfg_session1wResetMode = val
+    }
+
+    RingConfigSection {
+        title: i18n("Claude Design")
+        showEnabled: cfg_showRingOmelette
+        mode: cfg_omelette7dResetMode
+        subHeading: i18n("Show reset as")
+        options: [
+            { value: "timeLeft",  label: i18n("Remaining time"),   example: i18n("e.g. 3d / 12h 30m") },
+            { value: "exactDate", label: i18n("Exact reset date"),  example: i18n("e.g. Apr 15")        }
+        ]
+        onShowToggled: (val) => cfg_showRingOmelette = val
+        onModeSelected: (val) => cfg_omelette7dResetMode = val
     }
 
     RingConfigSection {

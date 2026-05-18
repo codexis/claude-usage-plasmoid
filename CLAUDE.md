@@ -54,7 +54,7 @@ tests/
 
 1. `main.qml` spawns `fetch_usage.py` via `PlasmaCore.DataSource` (engine: `"executable"`).
 2. The Python script calls `https://api.anthropic.com/api/oauth/usage`, reads the OAuth token from `~/.claude/.credentials.json` (Claude Code) or `~/.config/claude-usage-widget/config.json` (manual).
-3. On success it prints a JSON object; `main.qml` parses `five_hour`, `seven_day`, and `extra_usage` fields. Example response shape:
+3. On success it prints a JSON object; `main.qml` parses `five_hour`, `seven_day`, `seven_day_omelette`, and `extra_usage` fields. Example response shape:
 
 ```json
 {
@@ -76,7 +76,8 @@ tests/
     }
 }
 ```
-4. `main.qml` holds all state (`usage5h`, `usage7d`, `reset5h`, `reset7d`, `usageExtra`, `extraLimit`, `extraUsed`, `extraCurrency`, `extraPresent`, `extraEnabled`) and passes computed props down to `RingGauge` instances.
+4. `main.qml` holds all state (`usage5h`, `usage7d`, `usageOmelette`, `reset5h`, `reset7d`, `resetOmelette`, `usageExtra`, `extraLimit`, `extraUsed`, `extraCurrency`, `extraPresent`, `extraEnabled`) and passes computed props down to `RingGauge` instances.
+   - `seven_day_omelette` follows the same shape as `seven_day` (`utilization` + `resets_at`); ring is hidden by default via `showRingOmelette`.
    - `extra_usage` is a monthly credits bucket: `monthly_limit` and `used_credits` are in centi-currency (÷100 to get real amount, e.g. `1700` → €17.00). Ring is hidden when `extra_usage === null`; shown gray when `is_enabled === false`.
 5. A `pollTimer` re-fetches every 5 minutes (doubles on HTTP 429, capped at 30 min). A second 1-minute timer increments `_tick` to force reactive re-evaluation of time-remaining labels without a full fetch.
 
@@ -84,9 +85,10 @@ tests/
 
 - Settings are declared in `config/main.xml` and read in QML as `Plasmoid.configuration.<key>`.
 - `configGeneral.qml` exposes properties named `cfg_<key>` — Plasma syncs these automatically to/from the config store.
-- `showRing5h` / `showRing7d` / `showRingExtra` (Bool) — per-ring visibility toggles; extra ring defaults to `false`.
+- `showRing5h` / `showRing7d` / `showRingOmelette` / `showRingExtra` (Bool) — per-ring visibility toggles; omelette and extra ring default to `false`.
 - `session5hResetMode` (`"timeLeft"` | `"exactTime"`) — label below the session ring.
 - `session1wResetMode` (`"timeLeft"` | `"exactDate"`) — label below the weekly ring.
+- `omelette7dResetMode` (`"timeLeft"` | `"exactDate"`) — label below the Claude Design ring.
 - `extraUsageDisplay` (`"spent"` | `"remaining"`) — label format for the extra usage ring.
 - `colorTheme` (`"plasma"` default | `"original"`) selects Follow System Theme vs Custom Colors.
 - `customGreen/Yellow/Orange/Red` — user-configurable arc colors for the Custom Colors theme (Low / Medium / High / Critical thresholds).

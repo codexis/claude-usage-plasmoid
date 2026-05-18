@@ -1,21 +1,22 @@
 # Claude AI Usage — KDE Plasma Widget
 
-A KDE Plasma 6 plasmoid that displays your Claude AI usage as animated circular progress rings for the **session** (5-hour), **weekly** (7-day), and optional **extra usage** (monthly credits) windows.
+A KDE Plasma 6 plasmoid that displays your Claude AI usage as animated circular progress rings for the **session** (5-hour), **weekly** (7-day), **Claude Design** (7-day omelette), and optional **extra usage** (monthly credits) windows.
 
 ```
-┌────────────────────────────────────────────┐
-│ • Claude AI Usage                      ↻   │
-│                                            │
-│  ╭───────╮      ╭───────╮      ╭───────╮   │
-│  │  73%  │      │  41%  │      │  €15  │   │
-│  │1h 33m │      │ Oct 7 │      │ / €70 │   │
-│  ╰───────╯      ╰───────╯      ╰───────╯   │
-│   session         weekly         extra     │
-└────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────┐
+│ • Claude AI Usage                            ↻   │
+│                                                  │
+│  ╭───────╮   ╭───────╮   ╭───────╮   ╭───────╮   │
+│  │  73%  │   │  41%  │   │  89%  │   │  €15  │   │
+│  │1h 33m │   │ Oct 7 │   │ Oct 7 │   │ / €70 │   │
+│  ╰───────╯   ╰───────╯   ╰───────╯   ╰───────╯   │
+│   session      weekly      design       extra    │
+└──────────────────────────────────────────────────┘
 ```
 
 - **Session ring** — usage % + remaining time or exact reset time
 - **Weekly ring** — usage % + remaining time (days / h m) or exact reset date
+- **Claude Design ring** — separate weekly `seven_day_omelette` usage window; same display options as the weekly ring; hidden by default
 - **Extra usage ring** — monthly credits bucket: shows amount spent or remaining (e.g. `€8.77 / €17.00`); hidden when no extra plan, grayed out when disabled
 - **Per-ring visibility** — each ring can be independently shown or hidden from the General settings
 - **Dynamic colors** — green → yellow → orange → red based on utilization

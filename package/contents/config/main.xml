@@ -14,6 +14,12 @@
         <entry name="showRingExtra" type="Bool">
             <default>false</default>
         </entry>
+        <entry name="showRingOmelette" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="omelette7dResetMode" type="String">
+            <default>timeLeft</default>
+        </entry>
         <entry name="session5hResetMode" type="String">
             <default>exactTime</default>
         </entry>

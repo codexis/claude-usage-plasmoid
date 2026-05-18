@@ -37,6 +37,8 @@ PlasmoidItem {
     property real usage7d:  0.0
     property string reset5h: ""
     property string reset7d: ""
+    property real   usageOmelette: 0.0
+    property string resetOmelette: ""
     property string errorMsg: ""
     property bool   loaded:   false
 
@@ -125,6 +127,14 @@ PlasmoidItem {
             : TimeUtils.formatResetDate(root.reset7d, locale)
     }
 
+    function computeResetInOmelette() {
+        root._tick
+        const locale = Qt.locale()
+        return plasmoid.configuration.omelette7dResetMode === "timeLeft"
+            ? TimeUtils.formatTimeLeftWeekly(root.resetOmelette)
+            : TimeUtils.formatResetDate(root.resetOmelette, locale)
+    }
+
     // ── DataSource — runs Python script via shell ─────────────────────────────
     PlasmaCore.DataSource {
         id: ds
@@ -155,6 +165,9 @@ PlasmoidItem {
                     root.usage7d  = u7 / 100
                     root.reset5h  = obj.five_hour ? obj.five_hour.resets_at : ""
                     root.reset7d  = obj.seven_day ? obj.seven_day.resets_at : ""
+                    const om = obj.seven_day_omelette
+                    root.usageOmelette = om ? (om.utilization || 0) / 100 : 0
+                    root.resetOmelette = om ? om.resets_at : ""
                     const ex = obj.extra_usage
                     if (ex !== null && ex !== undefined) {
                         root.extraPresent  = true
@@ -293,7 +306,28 @@ PlasmoidItem {
                     color: themeAdapter.separator
                     Layout.fillHeight: true
                     width: 1
-                    visible: (plasmoid.configuration.showRing5h || plasmoid.configuration.showRing7d)
+                    visible: plasmoid.configuration.showRing7d && plasmoid.configuration.showRingOmelette
+                }
+
+                RingGauge {
+                    accent:    root.colorFor(root.usageOmelette)
+                    errMode:   !root.loaded
+                    label:     i18n("Claude Design")
+                    Layout.fillHeight: true
+                    Layout.fillWidth:  true
+                    resetIn:   root.computeResetInOmelette()
+                    ringBg:    themeAdapter.ring
+                    subColor:  themeAdapter.subText
+                    textColor: themeAdapter.text
+                    value:     root.usageOmelette
+                    visible:   plasmoid.configuration.showRingOmelette
+                }
+
+                Rectangle {
+                    color: themeAdapter.separator
+                    Layout.fillHeight: true
+                    width: 1
+                    visible: (plasmoid.configuration.showRing5h || plasmoid.configuration.showRing7d || plasmoid.configuration.showRingOmelette)
                              && root.extraPresent && plasmoid.configuration.showRingExtra
                 }
 
